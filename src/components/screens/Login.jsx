@@ -16,7 +16,7 @@ export const Login = () => {
         <h1 className="text-xl font-semibold text-center">Iniciar sesion</h1>
         <Input field="Usuario" />
         <Input field="contraseña" type="password" />
-        <Button name="inicar sesion" shadow onClick={handleLogin} />
+        <Button name="Entrar" shadow onClick={handleLogin} />
       </form>
     </div>
   )
