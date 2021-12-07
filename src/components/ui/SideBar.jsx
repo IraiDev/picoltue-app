@@ -1,7 +1,9 @@
 import { useContext } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { UiContext } from '../../context/Ui'
 import Button from './Button'
+import LiNav from './LiNav'
+import logo from '../../assets/img/logo25x25.png'
 
 const SideBar = () => {
   const { sidebar, toggleSidebar } = useContext(UiContext)
@@ -14,46 +16,43 @@ const SideBar = () => {
   return (
     <aside
       className={`
-        bg-transparent p-3 h-full fixed w-64 z-50 top-0 left-0
-        animate__animated animate__faster 
+        bg-white shadow-2xl h-screen fixed w-64 z-40 top-0 left-0
+        animate__animated animate__faster text-gray-800
         ${sidebar ? 'animate__slideInLeft' : 'animate__slideOutLeft'
         }`} >
-      <div className="bg-gray-100 relative border rounded-md shadow-2xl h-full">
-        <header className="flex items-center justify-between mb-20 p-3 bg-gray-200">
-          <h1 className="text-lg font-semibold">Zionit</h1>
-          <Button
-            className=""
-            type="icon"
-            icon="fas fa-times"
-            onClick={toggleSidebar} />
-        </header>
-        <ul className="capitalize p-3 grid gap-1">
-          <li className="hover:bg-gray-300 bg-gray-200 hover:text-blue-500 transition duration-300 rounded-md"
-            onClick={toggleSidebar}
-          >
-            <NavLink
-              className={({ isActive }) => `block px-4 py-2 ${isActive && 'text-purple-500 font-semibold'}`}
-              to="/personal">
-              ficha de inscripcion
-            </NavLink>
-          </li>
-          <li className="hover:bg-gray-300 bg-gray-200 hover:text-blue-500 transition duration-300 rounded-md"
-            onClick={toggleSidebar}
-          >
-            <NavLink
-              className={({ isActive }) => `block px-4 py-2 ${isActive && 'text-purple-500 font-semibold'}`}
-              to="/cosechas">
-              lectura de cosechas
-            </NavLink>
-          </li>
-        </ul>
+      <header className="flex items-center justify-between py-4 px-3 border-b">
+        <h1 className="text-base text-gray-800">Agricola Picoltue Limitada</h1>
         <Button
-          className="place-items-end absolute bottom-4 left-5 rounded-md hover:bg-red-500 hover:text-white w-48"
-          type="iconText"
-          icon="fas fa-sign-out-alt"
-          name="Cerrar sesion"
-          onClick={handleLogout} />
-      </div>
+          className="hover:bg-gray-200 rounded-lg"
+          type="icon"
+          icon="fas fa-times"
+          onClick={toggleSidebar} />
+      </header>
+      <section className="absolute top-12 bg-white left-1/2 transform -translate-x-1/2 w-max rounded-full border-4 border-white shadow-md">
+        <img src={logo} alt="logo" />
+      </section>
+      <ul className="capitalize mt-20">
+        <h5 className="font-light text-gray-500 px-3">Menu</h5>
+        <LiNav
+          to="/cosechas"
+          name="lectura de cosechas"
+          icon="fas fa-warehouse"
+          onClick={toggleSidebar}
+        />
+        <LiNav
+          to="/personal"
+          name="ficha de inscripcion"
+          icon="far fa-address-book"
+          onClick={toggleSidebar}
+        />
+      </ul>
+      <Button
+        className="absolute bottom-0 py-3 border-t w-full hover:bg-red-400 hover:text-white"
+        type="iconText"
+        icon="fas fa-sign-out-alt"
+        iconFirst
+        name="Cerrar sesion"
+        onClick={handleLogout} />
     </aside>
   )
 }

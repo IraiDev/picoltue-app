@@ -3,6 +3,7 @@ import Td from '../table/Td'
 import Th from '../table/Th'
 import Button from '../ui/Button'
 import Container from '../ui/Container'
+import Pager from '../ui/Pager'
 import Select from '../ui/Select'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
@@ -14,13 +15,13 @@ const Harvest = () => {
   const [state, setstate] = useState(2)
 
   return (
-    <Container title="Lecturas de dispositivos de Cosechas" user="Ignacio arriagada">
+    <Container title="Lecturas de dispositivos de Cosechas" user="Ignacio arriagada" showMenu>
       <section className="mt-6 w-full overflow-custom">
         <div className="w-table mx-auto overflow-hidden rounded-md shadow-lg">
           <div className="w-full max-h-75vh overflow-custom">
             <table className="w-full relative">
               <thead className="sticky top-0">
-                <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 ">
+                <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">
                   <Th></Th>
                   <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
                   <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
@@ -43,8 +44,8 @@ const Harvest = () => {
                   <Th>fundo</Th>
                   <Th>cuartel</Th>
                   <Th>especie</Th>
-                  <Th highlight={true}>variedad</Th>
-                  <Th highlight={true}>faena</Th>
+                  <Th highlight>variedad</Th>
+                  <Th highlight>faena</Th>
                   <Th>rut cosechero</Th>
                   <Th>nombre cosechero</Th>
                   <Th>kgs</Th>
@@ -94,6 +95,7 @@ const Harvest = () => {
           </div>
         </div>
       </section>
+      <Pager />
     </Container>
   )
 }

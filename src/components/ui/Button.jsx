@@ -10,7 +10,8 @@ function Button({
   type,
   disabled = false,
   iconFirst = false,
-  tooltip
+  tooltip,
+  children
 }) {
 
   if (disabled) {
@@ -47,6 +48,17 @@ function Button({
           </>
         }
 
+      </button>
+    )
+  }
+
+  if (type === 'pager') {
+    return (
+      <button
+        title={tooltip}
+        onClick={onClick}
+        className={`focus:outline-none transition duration-300 ${className} ${shadow && 'shadow-md'}`}>
+        {children}
       </button>
     )
   }

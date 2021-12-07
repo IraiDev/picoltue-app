@@ -6,6 +6,9 @@ module.exports = {
       maxHeight: {
         '75vh': '75vh',
       },
+      minHeight: {
+        'sb': '500px',
+      },
       width: {
         table: '1550px',
       }
