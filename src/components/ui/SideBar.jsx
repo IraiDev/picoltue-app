@@ -16,11 +16,11 @@ const SideBar = () => {
   return (
     <aside
       className={`
-        bg-white shadow-2xl h-screen fixed w-64 z-40 top-0 left-0
+        bg-gray-100 shadow-2xl h-screen fixed w-64 z-40 top-0 left-0
         animate__animated animate__faster text-gray-800
         ${sidebar ? 'animate__slideInLeft' : 'animate__slideOutLeft'
         }`} >
-      <header className="flex items-center justify-between py-4 px-3 border-b">
+      <header className="flex items-center justify-between bg-white py-4 px-3 border-b">
         <h1 className="text-base text-gray-800">Agricola Picoltue Limitada</h1>
         <Button
           className="hover:bg-gray-200 rounded-lg"
@@ -45,9 +45,15 @@ const SideBar = () => {
           icon="far fa-address-book"
           onClick={toggleSidebar}
         />
+        <LiNav
+          to="/mantenedor-usuario"
+          name="Mant. Usuarios"
+          icon="fas fa-user-cog"
+          onClick={toggleSidebar}
+        />
       </ul>
       <Button
-        className="absolute bottom-0 py-3 border-t w-full hover:bg-red-400 hover:text-white"
+        className="absolute bottom-0 py-3 border-t w-full bg-white hover:bg-red-400 hover:text-white"
         type="iconText"
         icon="fas fa-sign-out-alt"
         iconFirst

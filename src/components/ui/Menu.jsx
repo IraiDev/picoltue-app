@@ -24,7 +24,8 @@ const Menu = () => {
                   type="iconText"
                   className="hover:bg-gray-200 "
                   icon="fas fa-file-excel text-green-500"
-                  name="Excel" block />
+                  name="Excel" block
+                  onClick={() => console.log('as;ldknma;sldkmas')} />
                <hr />
                <Button
                   type="iconText"
