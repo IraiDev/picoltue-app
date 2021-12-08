@@ -24,7 +24,7 @@ const Harvest = () => {
   })
 
   return (
-    <Container title="Lecturas de dispositivos de Cosechas" user="Ignacio arriagada" showMenu>
+    <Container title="Lecturas de dispositivos de Cosechas" user="Ignacio arriagada" showMenu >
       <Table width="w-table">
         <THead>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">

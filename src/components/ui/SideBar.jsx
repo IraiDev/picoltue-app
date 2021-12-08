@@ -16,7 +16,7 @@ const SideBar = () => {
   return (
     <aside
       className={`
-        bg-gray-100 shadow-2xl h-screen fixed w-64 z-40 top-0 left-0
+        bg-gray-100 shadow-2xl h-screen fixed w-64 z-20 top-0 left-0
         animate__animated animate__faster text-gray-800
         ${sidebar ? 'animate__slideInLeft' : 'animate__slideOutLeft'
         }`} >
