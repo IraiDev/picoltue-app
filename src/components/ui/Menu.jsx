@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Button from './Button'
 import OnOutsiceClick from 'react-outclick'
+import { useWindowSize } from '../../hooks/useSize'
 
 const Menu = () => {
+   const { width } = useWindowSize()
    const [showMenu, setShowMenu] = useState(false)
 
    useEffect(() => {
@@ -13,9 +15,9 @@ const Menu = () => {
       <OnOutsiceClick onOutsideClick={() => setShowMenu(false)}>
          <div className="relative">
             <Button
-               className="rounded-full bg-blue-400 hover:bg-blue-500 text-white"
+               className={`${width < 768 ? 'rounded-md' : 'rounded-full'} bg-blue-400 hover:bg-blue-500 text-white`}
                shadow
-               type="iconText"
+               type={width < 768 ? 'icon' : 'iconText'}
                icon="fas fa-file-export"
                iconFirst
                name="exportar"
@@ -27,10 +29,11 @@ const Menu = () => {
                animate__animated animate__fadeIn animate__faster
                `}>
                   <Button
+                     className="hover:bg-gray-200"
                      type="iconText"
-                     className="hover:bg-gray-200 "
                      icon="fas fa-file-excel text-green-500"
-                     name="Excel" block
+                     name="Excel"
+                     block
                      onClick={() => console.log('as;ldknma;sldkmas')} />
                   <hr />
                   <Button

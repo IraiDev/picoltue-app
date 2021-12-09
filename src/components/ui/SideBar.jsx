@@ -17,7 +17,7 @@ const SideBar = () => {
     <aside
       className={`
         bg-gray-100 shadow-2xl h-screen fixed w-64 z-20 top-0 left-0
-        animate__animated animate__faster text-gray-800
+        animate__animated animate__faster text-gray-800 border
         ${sidebar ? 'animate__slideInLeft' : 'animate__slideOutLeft'
         }`} >
       <header className="flex items-center justify-between bg-white py-4 px-3 border-b">

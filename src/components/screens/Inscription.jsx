@@ -12,7 +12,10 @@ import Table from '../table/Table'
 import THead from '../table/THead'
 import TBody from '../table/TBody'
 import { useForm } from '../../hooks/useForm'
-import { checkRut, prettifyRut } from "react-rut-formatter";
+import { checkRut, prettifyRut } from 'react-rut-formatter'
+import { Alert } from '../../helpers/alerts';
+import { checkForms } from '../../helpers/helpers'
+import moment from 'moment'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
 
@@ -43,11 +46,182 @@ const Inscription = () => {
    }
 
    const handleNewInscription = () => {
-      if (checkRut(rut)) {
-         console.log('validando rut true')
+
+      const { state: rs, char: rc, list: rl } = checkForms(rut)
+      const { state: fs, char: fc, list: fl } = checkForms(firstName)
+      const { state: sns, char: snc, list: snl } = checkForms(secondName)
+      const { state: ls, char: lc, list: ll } = checkForms(lastName)
+      const { state: sls, char: slc, list: sll } = checkForms(secondLastName)
+
+      const contentFormat = (char, list, field) => {
+         return `Caracter <strong class="text-xl">${char}</strong> no permitido en campo <strong class="uppercase">${field}</strong> <br />
+         Lista de caracteres no permitidos por el sistema: <br /> <strong>${list}</strong>`
       }
-      else {
-         console.log('validando rut false')
+
+      if (rs) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(rc, rl, 'Rut'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (fs) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(fc, fl, 'primer nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (sns) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(snc, snl, 'segundo nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (ls) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(lc, ll, 'apellido paterno'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (sls) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(slc, sll, 'apellido materno'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === '') {
+         Alert({
+            title: 'Atencion',
+            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
+
+      if (!checkRut(rut)) {
+         Alert({
+            icon: 'warn',
+            title: 'Rut invalido',
+            content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
+   }
+
+   const handleUpdateInscription = () => {
+
+      const { state: rs, char: rc, list: rl } = checkForms(rut)
+      const { state: fs, char: fc, list: fl } = checkForms(firstName)
+      const { state: sns, char: snc, list: snl } = checkForms(secondName)
+      const { state: ls, char: lc, list: ll } = checkForms(lastName)
+      const { state: sls, char: slc, list: sll } = checkForms(secondLastName)
+
+      const contentFormat = (char, list, field) => {
+         return `Caracter <strong class="text-xl">${char}</strong> no permitido en campo <strong class="uppercase">${field}</strong> <br />
+         Lista de caracteres no permitidos por el sistema: <br /> <strong>${list}</strong>`
+      }
+
+      if (rs) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(rc, rl, 'Rut'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (fs) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(fc, fl, 'primer nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (sns) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(snc, snl, 'segundo nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (ls) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(lc, ll, 'apellido paterno'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (sls) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(slc, sll, 'apellido materno'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === '') {
+         Alert({
+            title: 'Atencion',
+            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
+
+      if (!checkRut(rut)) {
+         Alert({
+            icon: 'warn',
+            title: 'Rut invalido',
+            content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
       }
    }
 
@@ -59,7 +233,7 @@ const Inscription = () => {
             secondName: 'pepe',
             lastName: 'peres',
             secondLastName: 'lopez',
-            date: '12-12-12'
+            date: moment('2021-12-03').format('DD-MM-YYYY')
          }
       }
       else {
@@ -166,7 +340,7 @@ const Inscription = () => {
                   {isUpdate ? 'MOdificar FICHA DE INSCRIPCION' : 'NUEVA FICHA DE INSCRIPCION'}
                </h1>
                <HrLabel name="datos ficha" />
-               <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                      field="Primer nombre"
                      name="firstName"
@@ -184,7 +358,7 @@ const Inscription = () => {
                         secondName: e.target.value
                      })} />
                </div>
-               <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                      field="apellido paterno"
                      name="lastName"
@@ -202,10 +376,11 @@ const Inscription = () => {
                         secondLastName: e.target.value
                      })} />
                </div>
-               <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                      field="RUT"
                      name="rut"
+                     placeholder="ej: 12.345.678-9"
                      value={prettifyRut(rut)}
                      onChange={e => setValues({
                         ...values,
@@ -267,18 +442,18 @@ const Inscription = () => {
                </div> */}
                </div>
             </section>
-            <footer className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+            <footer className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
                <Button
-                  className="rounded-full w-max border-2 border-red-400 hover:bg-red-400 text-red-500 hover:text-white"
+                  className="rounded-full md:w-max w-full border-2 border-red-400 hover:bg-red-400 text-red-500 hover:text-white"
                   name="cancelar"
                   shadow
                   onClick={handleCloseModal}
                />
                <Button
-                  className="rounded-full w-max place-self-end bg-green-400 hover:bg-green-500 text-white"
+                  className="rounded-full md:w-max w-full order-first md:order-last place-self-end bg-green-400 hover:bg-green-500 text-white"
                   name="Guardar"
                   shadow
-                  onClick={handleNewInscription}
+                  onClick={isUpdate ? handleUpdateInscription : handleNewInscription}
                />
             </footer>
          </Modal>

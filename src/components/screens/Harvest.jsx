@@ -87,7 +87,7 @@ const Harvest = () => {
             <Th>rut cosechero</Th>
             <Th>nombre cosechero</Th>
             <Th>cantidad</Th>
-            <Th>U, medida</Th>
+            <Th>U. medida</Th>
             <Th>hora. lectura</Th>
             <Th>diferencia tipo</Th>
             <Th>equipo</Th>

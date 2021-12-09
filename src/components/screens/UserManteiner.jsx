@@ -10,6 +10,9 @@ import HrLabel from '../ui/HrLabel'
 import Input from '../ui/Input'
 import Modal from '../ui/Modal'
 import Select from '../ui/Select'
+import { checkRut, prettifyRut } from 'react-rut-formatter'
+import { Alert } from '../../helpers/alerts'
+import { checkForms } from '../../helpers/helpers'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
 
@@ -34,6 +37,162 @@ const UserManteiner = () => {
    const handleCloseModal = () => {
       setShowModal(false)
       setValues(initForm)
+   }
+
+   const handleNewUser = () => {
+
+      const { state: rs, char: rc, list: rl } = checkForms(rut)
+      const { state: ns, char: nc, list: nl } = checkForms(name)
+      const { state: es, char: ec, list: el } = checkForms(email)
+      const { state: ls, char: lc, list: ll } = checkForms(login)
+
+      const contentFormat = (char, list, field) => {
+         return `Caracter <strong class="text-xl">${char}</strong> no permitido en campo <strong class="uppercase">${field}</strong> <br />
+         Lista de caracteres no permitidos por el sistema: <br /> <strong>${list}</strong>`
+      }
+
+      if (rs) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(rc, rl, 'Rut'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (ns) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(nc, nl, 'primer nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (es) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(ec, el, 'segundo nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (ls) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(lc, ll, 'apellido paterno'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (rut === '' || name === '' || email === '' || login === '') {
+         Alert({
+            title: 'Atencion',
+            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
+
+      if (!checkRut(rut)) {
+         Alert({
+            icon: 'warn',
+            title: 'Rut invalido',
+            content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
+   }
+
+   const handleUpdateUser = () => {
+
+      const { state: rs, char: rc, list: rl } = checkForms(rut)
+      const { state: ns, char: nc, list: nl } = checkForms(name)
+      const { state: es, char: ec, list: el } = checkForms(email)
+      const { state: ls, char: lc, list: ll } = checkForms(login)
+
+      const contentFormat = (char, list, field) => {
+         return `Caracter <strong class="text-xl">${char}</strong> no permitido en campo <strong class="uppercase">${field}</strong> <br />
+         Lista de caracteres no permitidos por el sistema: <br /> <strong>${list}</strong>`
+      }
+
+      if (rs) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(rc, rl, 'Rut'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (ns) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(nc, nl, 'primer nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (es) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(ec, el, 'segundo nombre'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (ls) {
+         Alert({
+            icon: 'warn',
+            title: 'Atencion',
+            content: contentFormat(lc, ll, 'apellido paterno'),
+            showCancelButton: false,
+            timer: 8000
+         })
+         return
+      }
+
+      if (rut === '' || name === '' || email === '' || login === '') {
+         Alert({
+            title: 'Atencion',
+            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
+
+      if (!checkRut(rut)) {
+         Alert({
+            icon: 'warn',
+            title: 'Rut invalido',
+            content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return
+      }
    }
 
    useEffect(() => {
@@ -123,13 +282,14 @@ const UserManteiner = () => {
                <Input
                   field="RUT"
                   name="rut"
-                  value={rut}
+                  placeholder="ej: 12.345.678-9"
+                  value={prettifyRut(rut)}
                   onChange={e => setValues({
                      ...values,
                      rut: e.target.value
                   })} />
                <Input
-                  field="Nombre completo"
+                  field="Nombre completo (Nombres y Apellidos)"
                   name="name"
                   value={name}
                   onChange={e => setValues({
@@ -139,6 +299,8 @@ const UserManteiner = () => {
                <Input
                   field="correo"
                   name="email"
+                  type="email"
+                  placeholder="ej: ejemplo@ejemplo.com"
                   value={email}
                   onChange={e => setValues({
                      ...values,
@@ -154,17 +316,18 @@ const UserManteiner = () => {
                   })} />
 
             </section>
-            <footer className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+            <footer className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
                <Button
-                  className="rounded-full w-max border-2 border-red-400 hover:bg-red-400 text-red-500 hover:text-white"
+                  className="rounded-full md:w-max w-full border-2 border-red-400 hover:bg-red-400 text-red-500 hover:text-white"
                   name="cancelar"
                   shadow
                   onClick={handleCloseModal}
                />
                <Button
-                  className="rounded-full w-max place-self-end bg-green-400 hover:bg-green-500 text-white"
+                  className="rounded-full md:w-max w-full order-first md:order-last place-self-end bg-green-400 hover:bg-green-500 text-white"
                   name="Guardar"
                   shadow
+                  onClick={isUpdate ? handleUpdateUser : handleNewUser}
                />
             </footer>
          </Modal>
