@@ -13,6 +13,7 @@ import Select from '../ui/Select'
 import { checkRut, prettifyRut } from 'react-rut-formatter'
 import { Alert } from '../../helpers/alerts'
 import { checkForms } from '../../helpers/helpers'
+import { useToggle } from '../../hooks/useToggle'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
 
@@ -29,13 +30,13 @@ let initForm = {
 
 const UserManteiner = () => {
    const [state, setstate] = useState(2)
-   const [showModal, setShowModal] = useState(false)
+   const [showModal, toggleModal] = useToggle(false)
    const [isUpdate, setIsUpdate] = useState(false)
    const [values, setValues] = useState(initForm)
    const { rut, name, email, login } = values
 
    const handleCloseModal = () => {
-      setShowModal(false)
+      toggleModal()
       setValues(initForm)
    }
 
@@ -222,7 +223,7 @@ const UserManteiner = () => {
             user="Ignacio arriagada"
             toggleModal={() => {
                setIsUpdate(false)
-               setShowModal(true)
+               toggleModal()
             }}
          >
             <Table>
@@ -255,7 +256,7 @@ const UserManteiner = () => {
                                     icon="fas fa-pen"
                                     onClick={() => {
                                        setIsUpdate(true)
-                                       setShowModal(true)
+                                       toggleModal()
                                     }} />
                                  <Button
                                     className="text-green-400 hover:bg-gray-200 rounded-md"

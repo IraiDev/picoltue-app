@@ -1,10 +1,12 @@
 import { useContext } from 'react'
-import { UiContext } from '../../context/Ui'
+import { AppContext } from '../../context/AppContext'
+import { UiContext } from '../../context/UiContext'
 import { useWindowSize } from '../../hooks/useSize'
 import Button from './Button'
 import Menu from './Menu'
 
-const Container = ({ children, title = 'Titulo', user = 'user', showMenu = false, toggleModal = () => { } }) => {
+const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal = () => { } }) => {
+   const { user } = useContext(AppContext)
    const { toggleSidebar } = useContext(UiContext)
    const { width } = useWindowSize()
 
@@ -29,7 +31,7 @@ const Container = ({ children, title = 'Titulo', user = 'user', showMenu = false
                      onClick={toggleModal} />
                }
             </div>
-            <h1 className="text-base font-semibold text-center capitalize hidden md:inline">{user}</h1>
+            <h1 className="text-base font-semibold text-center capitalize hidden md:inline">{user.usuario.nom_user}</h1>
          </header>
          {children}
       </div >

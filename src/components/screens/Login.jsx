@@ -4,13 +4,17 @@ import Button from '../ui/Button'
 import Input from '../ui/Input'
 import { Alert } from '../../helpers/alerts'
 import loginScreen from '../../assets/img/loginCherry.jpg'
+import { useContext } from 'react'
+import { AppContext } from '../../context/AppContext'
 
 export const Login = () => {
   const navigate = useNavigate()
-  const [{ user, pass }, onChangeValues, reset] = useForm({ user: '', pass: '' })
+  const [{ user, pass }, onChangeValues, reset] = useForm({ user: 'sacuna', pass: 'Thomas1994!' })
+  const { login } = useContext(AppContext)
 
   const handleLogin = e => {
     e.preventDefault()
+    login({ user_name: user, user_pass: pass })
     navigate('/')
     reset()
   }

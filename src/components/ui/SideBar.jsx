@@ -1,15 +1,18 @@
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { UiContext } from '../../context/Ui'
+import { UiContext } from '../../context/UiContext'
 import Button from './Button'
 import LiNav from './LiNav'
 import logo from '../../assets/img/logo25x25.png'
+import { AppContext } from '../../context/AppContext'
 
 const SideBar = () => {
-  const { sidebar, toggleSidebar } = useContext(UiContext)
+  const { showSidebar, toggleSidebar } = useContext(UiContext)
+  const { logout } = useContext(AppContext)
   const navigate = useNavigate()
 
   const handleLogout = () => {
+    logout()
     navigate('/login', { replace: true })
   }
 
@@ -18,7 +21,7 @@ const SideBar = () => {
       className={`
         bg-gray-100 shadow-2xl h-screen fixed w-64 z-20 top-0 left-0
         animate__animated animate__faster text-gray-800 border
-        ${sidebar ? 'animate__slideInLeft' : 'animate__slideOutLeft'
+        ${showSidebar ? 'animate__slideInLeft' : 'animate__slideOutLeft'
         }`} >
       <header className="flex items-center justify-between bg-white py-4 px-3 border-b">
         <h1 className="text-base text-gray-800">Agricola Picoltue Limitada</h1>
@@ -37,19 +40,19 @@ const SideBar = () => {
           to="/cosechas"
           name="lectura de cosechas"
           icon="fas fa-warehouse"
-          onClick={toggleSidebar}
+        // onClick={toggleSidebar}
         />
         <LiNav
           to="/personal"
           name="ficha de inscripcion"
           icon="far fa-address-book"
-          onClick={toggleSidebar}
+        // onClick={toggleSidebar}
         />
         <LiNav
           to="/mantenedor-usuario"
           name="Mant. Usuarios"
           icon="fas fa-user-cog"
-          onClick={toggleSidebar}
+        // onClick={toggleSidebar}
         />
       </ul>
       <Button

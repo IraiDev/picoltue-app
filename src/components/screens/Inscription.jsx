@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import Td from '../table/Td'
 import Th from '../table/Th'
 import Button from '../ui/Button'
@@ -16,12 +16,10 @@ import { checkRut, prettifyRut } from 'react-rut-formatter'
 import { Alert } from '../../helpers/alerts';
 import { checkForms } from '../../helpers/helpers'
 import moment from 'moment'
+import { useToggle } from '../../hooks/useToggle'
+import { AppContext } from '../../context/AppContext'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
-
-const arr = [
-   1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
-]
 
 let initForm = {
    rut: '',
@@ -33,15 +31,21 @@ let initForm = {
 }
 
 const Inscription = () => {
+   const { inscripciones, updateSheet, insertSheet, getSheets } = useContext(AppContext)
    const [state, setstate] = useState(2)
-   const [showModal, setShowModal] = useState(false)
-   const [isUpdate, setIsUpdate] = useState(false)
-   const [values, setValues] = useState(initForm)
-   const { rut, firstName, secondName, lastName, secondLastName, date } = values
+   const [showModal, toggleModal] = useToggle(false)
+   const [sheet, setSheet] = useState(null)
+   const [page, setPage] = useState(0)
    const [{ filterRut, filterName }, onChangeValues] = useForm({ filterRut: '', filterName: '' })
+   const [values, setValues] = useState(initForm)
+
+   // destructuring
+   const { rut, firstName, secondName, lastName, secondLastName, date } = values
+   // destructuring
 
    const handleCloseModal = () => {
-      setShowModal(false)
+      toggleModal()
+      setSheet(null)
       setValues(initForm)
    }
 
@@ -133,6 +137,19 @@ const Inscription = () => {
          })
          return
       }
+
+      const payload = {
+         rut: prettifyRut(rut),
+         nombre: firstName,
+         segundo_nombre: secondName,
+         apellido_p: lastName,
+         apellido_m: secondLastName,
+      }
+
+      insertSheet({ payload })
+      toggleModal()
+
+      console.log('insert data', payload)
    }
 
    const handleUpdateInscription = () => {
@@ -223,41 +240,82 @@ const Inscription = () => {
          })
          return
       }
+
+      const payload = {
+         id_ficha: sheet.id_ficha_inscripcion,
+         rut,
+         nombre: firstName,
+         segundo_nombre: secondName,
+         apellido_p: lastName,
+         apellido_m: secondLastName,
+      }
+
+      updateSheet({ payload })
+      toggleModal()
+
+      console.log('update data', payload)
    }
 
-   useEffect(() => {
-      if (isUpdate) {
-         initForm = {
-            rut: '1111-2',
-            firstName: 'juan',
-            secondName: 'pepe',
-            lastName: 'peres',
-            secondLastName: 'lopez',
-            date: moment('2021-12-03').format('DD-MM-YYYY')
-         }
+   const updateAction = (id) => {
+      const i = inscripciones.fichas.find(f => f.id_ficha_inscripcion === id)
+      const {
+         nombre,
+         segundo_nombre,
+         rut_trabajador,
+         apellido_materno,
+         apellido_paterno,
+         fecha_nacto
+      } = i
+
+      setValues({
+         rut: rut_trabajador,
+         firstName: nombre,
+         secondName: segundo_nombre,
+         lastName: apellido_paterno,
+         secondLastName: apellido_materno,
+         date: moment(new Date(fecha_nacto)).format('yyyy-MM-DD')
+      })
+      setSheet(i)
+      toggleModal()
+   }
+
+   const handleLastPage = () => {
+      const offset = inscripciones.fichas_totales - inscripciones.fichas_pagina
+      getSheets({ offset })
+   }
+
+   const handleNextPage = () => {
+      let offset
+      if (page + inscripciones.fichas_pagina > 0) {
+
+         offset = page + inscripciones.fichas_pagina
+      } else {
+         offset = inscripciones.fichas_totales
+         return
       }
-      else {
-         initForm = {
-            rut: '',
-            firstName: '',
-            secondName: '',
-            lastName: '',
-            secondLastName: '',
-            date: ''
-         }
+      console.log(offset)
+      setPage(offset)
+      getSheets({ offset })
+   }
+
+   const handlePrevPage = () => {
+      let offset
+      if (page - inscripciones.fichas_pagina <= 0) {
+
+         offset = page - inscripciones.fichas_pagina
+      } else {
+         offset = 0
+         return
       }
-      setValues(initForm)
-   }, [isUpdate])
+      setPage(offset)
+      getSheets({ offset })
+   }
 
    return (
       <>
          <Container
             title="Fichas de Inscripciones"
-            user="Ignacio arriagada"
-            toggleModal={() => {
-               setIsUpdate(false)
-               setShowModal(true)
-            }} >
+            toggleModal={toggleModal} >
             <Table>
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
@@ -297,19 +355,20 @@ const Inscription = () => {
                </THead>
                <TBody>
                   {
-                     arr.map((option, index) => (
-                        <tr key={index} className="text-gray-700 text-sm border-b">
+                     Object.keys(inscripciones).length > 0 &&
+                     inscripciones.fichas.map((f, i) => (
+                        <tr key={f.id_ficha_inscripcion} className="text-gray-700 text-sm border-b">
                            <Td borderLeft={false}>
                               <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md">
-                                 {option}
+                                 {i + 1}
                               </span>
                            </Td>
-                           <Td>ID</Td>
-                           <Td>RUT</Td>
-                           <Td>Nombre</Td>
+                           <Td>{f.id_ficha_inscripcion}</Td>
+                           <Td>{f.rut_trabajador}</Td>
+                           <Td>{f.nombre} {f.segundo_nombre} {f.apellido_paterno} {f.apellido_materno}</Td>
                            <Td>telefono</Td>
-                           <Td>comuna</Td>
-                           <Td>ciudad</Td>
+                           <Td>{f.comuna ? f.comuna.nombre : '--'}</Td>
+                           <Td>{f.ciudad ? f.ciudad.nombre : '--'}</Td>
                            <Td>
                               <div className="flex items-center justify-center">
                                  <Button
@@ -320,10 +379,7 @@ const Inscription = () => {
                                     className="text-blue-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
                                     icon="fas fa-pen"
-                                    onClick={() => {
-                                       setIsUpdate(true)
-                                       setShowModal(true)
-                                    }} />
+                                    onClick={() => updateAction(f.id_ficha_inscripcion)} />
                               </div>
                            </Td>
                         </tr>
@@ -331,14 +387,32 @@ const Inscription = () => {
                   }
                </TBody>
             </Table>
-            <Pager />
+            <footer className='grid grid-cols-1 md:grid-cols-2 mx-auto text-center gap-10 mt-4'>
+               <label>Total global de inscripciones: {inscripciones.fichas_totales}</label>
+               <label>Total de inscripciones según filtro : {inscripciones.fichas_totales}</label>
+            </footer>
+            <Pager
+               page={inscripciones.fichas_totales}
+               nextPage={handleNextPage}
+               lastPage={handleLastPage}
+               prevPage={handlePrevPage} />
          </Container>
 
+
+
          <Modal showModal={showModal} onClose={handleCloseModal}>
-            <section className="grid gap-4">
+            <header className='flex justify-between items-center mt-2 mb-5'>
                <h1 className="uppercase font-semibold text-lg">
-                  {isUpdate ? 'MOdificar FICHA DE INSCRIPCION' : 'NUEVA FICHA DE INSCRIPCION'}
+                  {sheet ? 'MOdificar FICHA DE INSCRIPCION' : 'NUEVA FICHA DE INSCRIPCION'}
                </h1>
+               {
+                  sheet &&
+                  <h5 className='capitalize bg-gray-100 rounded-full py-1 px-2 font-semibold text-gray-500'>
+                     ID ficha: {sheet.id_ficha_inscripcion}
+                  </h5>
+               }
+            </header>
+            <section className="grid gap-4">
                <HrLabel name="datos ficha" />
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
@@ -451,9 +525,9 @@ const Inscription = () => {
                />
                <Button
                   className="rounded-full md:w-max w-full order-first md:order-last place-self-end bg-green-400 hover:bg-green-500 text-white"
-                  name="Guardar"
+                  name={sheet ? 'modificar' : 'guardar'}
                   shadow
-                  onClick={isUpdate ? handleUpdateInscription : handleNewInscription}
+                  onClick={sheet ? handleUpdateInscription : handleNewInscription}
                />
             </footer>
          </Modal>

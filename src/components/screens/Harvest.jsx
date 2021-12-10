@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'
@@ -8,13 +8,13 @@ import Container from '../ui/Container'
 import Pager from '../ui/Pager'
 import Select from '../ui/Select'
 import { useForm } from '../../hooks/useForm'
+import { AppContext } from '../../context/AppContext'
+import moment from 'moment'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
-const arr = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
-]
 
 const Harvest = () => {
+  const { cosechas } = useContext(AppContext)
   const [state, setstate] = useState(2)
   const [{ filterRut, filterName, filterUser, filterKg }, onChangeValues] = useForm({
     filterRut: '',
@@ -24,7 +24,7 @@ const Harvest = () => {
   })
 
   return (
-    <Container title="Lecturas de dispositivos de Cosechas" user="Ignacio arriagada" showMenu >
+    <Container title="Lecturas de dispositivos de Cosechas" showMenu >
       <Table width="w-table">
         <THead>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">
@@ -36,7 +36,7 @@ const Harvest = () => {
 
             <Th>
               <input
-                className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                className="p-1 rounded-md w-24 focus:outline-none focus:shadow-md focus:ring transition duration-200"
                 type="text"
                 name="filterRut"
                 value={filterRut}
@@ -44,7 +44,7 @@ const Harvest = () => {
             </Th>
             <Th>
               <input
-                className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                 type="text"
                 name="filterName"
                 value={filterName}
@@ -52,7 +52,7 @@ const Harvest = () => {
             </Th>
             <Th>
               <input
-                className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                className="p-1 w-16 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                 type="text"
                 name="filterKg"
                 value={filterKg}
@@ -66,10 +66,9 @@ const Harvest = () => {
             <Th></Th>
             <Th></Th>
             <Th></Th>
-            <Th></Th>
             <Th>
               <input
-                className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                 type="text"
                 name="filterUser"
                 value={filterUser}
@@ -89,7 +88,6 @@ const Harvest = () => {
             <Th>cantidad</Th>
             <Th>U. medida</Th>
             <Th>hora. lectura</Th>
-            <Th>diferencia tipo</Th>
             <Th>equipo</Th>
             <Th>usuario</Th>
             <Th>id serv</Th>
@@ -98,23 +96,23 @@ const Harvest = () => {
         </THead>
         <TBody>
           {
-            arr.map((option, index) => (
-              <tr key={index} className="text-gray-700 text-sm border-b">
+            Object.keys(cosechas).length > 0 &&
+            cosechas.lecturas.map((l, i) => (
+              <tr key={i} className="text-gray-700 text-sm border-b w-max">
                 <Td borderLeft={false}>
                   <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md">
-                    {option}
+                    {i + 1}
                   </span>
                 </Td>
-                <Td children="fundo" />
-                <Td children="cuartel" />
+                <Td children={l.lectura_relacion_ig.item_negocio.desc_item_negocio} />
+                <Td children={l.lectura_relacion_ig.cuartel.nombre} />
                 <Td children="especie" />
-                <Td children="faena" />
-                <Td children="rut cosechero" />
-                <Td children="nombre cosechero" />
-                <Td children="11233213" />
-                <Td children="kg" />
-                <Td children="16:23:21" />
-                <Td children="dif.tipo" />
+                <Td children={l.rh_faena.desc_faena} />
+                <Td children={l.lectura_cosechero.rut_trabajador} />
+                <Td children={l.lectura_cosechero.nombre_cosechero} />
+                <Td align='text-right' children={l.peso} />
+                <Td align='text-left' children={l.rh_faena.tipo_medida.desc_tipo_med} />
+                <Td children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
                 <Td children="equipo" />
                 <Td children="usuario" />
                 <Td children="idserv" />
