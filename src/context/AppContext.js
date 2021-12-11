@@ -70,10 +70,10 @@ const AppProvider = ({ children }) => {
       }
    }
 
-   const getSheets = async (data = {}) => {
+   const getSheets = async (data = { limite: 10 }) => {
       const resp = await fetchToken('fichas', data, 'POST')
       const body = await resp.json()
-      console.log('fichas: ', body)
+      // console.log('fichas: ', body)
       if (body.ok) {
          setInscripciones(body)
       }
@@ -127,16 +127,22 @@ const AppProvider = ({ children }) => {
 
       const filters = ['fundos', 'cuarteles', 'especies', 'comunas', 'ciudades']
 
-      filters.forEach(async (f) => {
+      const data = []
+      for (const f of filters) {
          const resp = await fetchToken(`filters/${f}`)
          const body = await resp.json()
-         // console.log(`${f}: `, body)
-         if (body.ok) {
-            setFiltros({ ...filtros, [f]: body.response })
-         }
-         else console.log('error al obtener filtros ', body)
-      })
+         data.push({ [f]: body.response })
+      }
 
+      console.log('data: ', data)
+
+      setFiltros({
+         fundos: data[0].fundos.map(f => ({ value: f.id_item_negocio, label: f.desc_item_negocio })),
+         cuarteles: data[1].cuarteles.map(c => ({ value: c.id_centro_costo, label: c.nombre })),
+         especies: data[2].especies.map(e => ({ value: e.id_especie, label: e.desc_especie })),
+         comunas: data[3].comunas.map(c => ({ value: c.id_comuna, label: c.nombre })),
+         ciudades: data[4].ciudades.map(c => ({ value: c.id_ciudad, label: c.nombre, id_comuna: c.id_comuna })),
+      })
    }
 
    useEffect(() => {

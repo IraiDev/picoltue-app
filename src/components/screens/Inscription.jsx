@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Td from '../table/Td'
 import Th from '../table/Th'
 import Button from '../ui/Button'
@@ -18,10 +18,16 @@ import { checkForms } from '../../helpers/helpers'
 import moment from 'moment'
 import { useToggle } from '../../hooks/useToggle'
 import { AppContext } from '../../context/AppContext'
+import TFooter from '../table/TFooter'
 
-const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
+const limite = [
+   { value: 10, label: '10' },
+   { value: 25, label: '25' },
+   { value: 50, label: '50' },
+   { value: 100, label: '100' }
+]
 
-let initForm = {
+const initForm = {
    rut: '',
    firstName: '',
    secondName: '',
@@ -31,17 +37,28 @@ let initForm = {
 }
 
 const Inscription = () => {
-   const { inscripciones, updateSheet, insertSheet, getSheets } = useContext(AppContext)
-   const [state, setstate] = useState(2)
+
+   const { inscripciones, updateSheet, insertSheet, getSheets, filtros } = useContext(AppContext)
+
    const [showModal, toggleModal] = useToggle(false)
    const [sheet, setSheet] = useState(null)
-   const [page, setPage] = useState(0)
-   const [{ filterRut, filterName }, onChangeValues] = useForm({ filterRut: '', filterName: '' })
    const [values, setValues] = useState(initForm)
+   const [cityMacth, setCityMatch] = useState([])
 
    // destructuring
    const { rut, firstName, secondName, lastName, secondLastName, date } = values
+   const { ciudades, comunas } = filtros
    // destructuring
+
+   const [{ filterRut, filterName, filterCountry, filterCity, filterLimit }, onChangeValues] = useForm({
+      filterRut: '',
+      filterName: '',
+      filterLimit: 10,
+      filterCountry: '',
+      filterCity: ''
+   })
+
+   const pageCount = Math.ceil(inscripciones.fichas_totales / filterLimit)
 
    const handleCloseModal = () => {
       toggleModal()
@@ -148,6 +165,8 @@ const Inscription = () => {
 
       insertSheet({ payload })
       toggleModal()
+      setSheet(null)
+      setValues(initForm)
 
       console.log('insert data', payload)
    }
@@ -252,6 +271,8 @@ const Inscription = () => {
 
       updateSheet({ payload })
       toggleModal()
+      setSheet(null)
+      setValues(initForm)
 
       console.log('update data', payload)
    }
@@ -267,6 +288,7 @@ const Inscription = () => {
          fecha_nacto
       } = i
 
+      setSheet(i)
       setValues({
          rut: rut_trabajador,
          firstName: nombre,
@@ -275,48 +297,32 @@ const Inscription = () => {
          secondLastName: apellido_materno,
          date: moment(new Date(fecha_nacto)).format('yyyy-MM-DD')
       })
-      setSheet(i)
+
       toggleModal()
    }
 
-   const handleLastPage = () => {
-      const offset = inscripciones.fichas_totales - inscripciones.fichas_pagina
-      getSheets({ offset })
+   const handlePageClick = (e) => {
+      let offset = (e.selected * filterLimit) % inscripciones.fichas_totales
+      getSheets({ offset, filterLimit })
    }
 
-   const handleNextPage = () => {
-      let offset
-      if (page + inscripciones.fichas_pagina > 0) {
+   useEffect(() => {
 
-         offset = page + inscripciones.fichas_pagina
-      } else {
-         offset = inscripciones.fichas_totales
-         return
-      }
-      console.log(offset)
-      setPage(offset)
-      getSheets({ offset })
-   }
+      const f = ciudades.filter(c => c.id_comuna === Number(filterCountry))
+      console.log('ciudades: ', f, 'filterCountry: ', filterCountry)
 
-   const handlePrevPage = () => {
-      let offset
-      if (page - inscripciones.fichas_pagina <= 0) {
+      filterCountry === '' ?
+         setCityMatch(ciudades)
+         : setCityMatch(ciudades.filter(c => c.id_comuna === Number(filterCountry)))
 
-         offset = page - inscripciones.fichas_pagina
-      } else {
-         offset = 0
-         return
-      }
-      setPage(offset)
-      getSheets({ offset })
-   }
+   }, [filterCountry])
 
    return (
       <>
          <Container
             title="Fichas de Inscripciones"
             toggleModal={toggleModal} >
-            <Table>
+            <Table width='w-table_md'>
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
                      <Th></Th>
@@ -338,9 +344,9 @@ const Inscription = () => {
                            onChange={onChangeValues} />
                      </Th>
                      <Th></Th>
-                     <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-                     <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-                     <Th></Th>
+                     <Th><Select options={comunas} value={filterCountry} name='filterCountry' onChange={onChangeValues} /></Th>
+                     <Th><Select options={cityMacth} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
+                     <Th><Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} /></Th>
                   </tr>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
                      <Th>#</Th>
@@ -350,7 +356,7 @@ const Inscription = () => {
                      <Th>telefono</Th>
                      <Th>comuna</Th>
                      <Th>ciudad</Th>
-                     <Th>Acciones</Th>
+                     <Th>limite</Th>
                   </tr>
                </THead>
                <TBody>
@@ -386,19 +392,23 @@ const Inscription = () => {
                      ))
                   }
                </TBody>
+               <TFooter>
+                  <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
+                     <td colSpan={8} className='p-2 w-full'>
+                        <div className='flex justify-around items-center px-4'>
+                           <label>Total inscripciones: {inscripciones.fichas_totales}</label>
+                           <Pager
+                              onPageChange={handlePageClick}
+                              pageRangeDisplayed={5}
+                              pageCount={pageCount}
+                           />
+                           <label>Total según filtro : {inscripciones.fichas_totales}</label>
+                        </div>
+                     </td>
+                  </tr>
+               </TFooter>
             </Table>
-            <footer className='grid grid-cols-1 md:grid-cols-2 mx-auto text-center gap-10 mt-4'>
-               <label>Total global de inscripciones: {inscripciones.fichas_totales}</label>
-               <label>Total de inscripciones según filtro : {inscripciones.fichas_totales}</label>
-            </footer>
-            <Pager
-               page={inscripciones.fichas_totales}
-               nextPage={handleNextPage}
-               lastPage={handleLastPage}
-               prevPage={handlePrevPage} />
          </Container>
-
-
 
          <Modal showModal={showModal} onClose={handleCloseModal}>
             <header className='flex justify-between items-center mt-2 mb-5'>
@@ -448,6 +458,26 @@ const Inscription = () => {
                      onChange={e => setValues({
                         ...values,
                         secondLastName: e.target.value
+                     })} />
+               </div>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                     field="RUT"
+                     name="rut"
+                     placeholder="ej: 12.345.678-9"
+                     value={prettifyRut(rut)}
+                     onChange={e => setValues({
+                        ...values,
+                        rut: e.target.value
+                     })} />
+                  <Input
+                     type="date"
+                     field="Fecha de nacimiento"
+                     name="date"
+                     value={date}
+                     onChange={e => setValues({
+                        ...values,
+                        date: e.target.value
                      })} />
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

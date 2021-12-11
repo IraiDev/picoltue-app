@@ -14,6 +14,8 @@ import { checkRut, prettifyRut } from 'react-rut-formatter'
 import { Alert } from '../../helpers/alerts'
 import { checkForms } from '../../helpers/helpers'
 import { useToggle } from '../../hooks/useToggle'
+import TFooter from '../table/TFooter'
+import Pager from '../ui/Pager'
 
 const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
 
@@ -21,7 +23,7 @@ const arr = [
    1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
 ]
 
-let initForm = {
+const initForm = {
    rut: '',
    name: '',
    email: '',
@@ -196,26 +198,6 @@ const UserManteiner = () => {
       }
    }
 
-   useEffect(() => {
-      if (isUpdate) {
-         initForm = {
-            rut: '1111-2',
-            name: 'juan',
-            email: 'a@a.cl',
-            login: 'juanito'
-         }
-      }
-      else {
-         initForm = {
-            rut: '',
-            name: '',
-            email: '',
-            login: ''
-         }
-      }
-      setValues(initForm)
-   }, [isUpdate])
-
    return (
       <>
          <Container
@@ -226,7 +208,7 @@ const UserManteiner = () => {
                toggleModal()
             }}
          >
-            <Table>
+            <Table width='w-table_sm'>
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
                      <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
@@ -268,6 +250,21 @@ const UserManteiner = () => {
                      ))
                   }
                </TBody>
+               <TFooter>
+                  <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
+                     <td colSpan={14} className='p-2 w-full'>
+                        <div className='flex justify-around items-center px-4'>
+                           <label>Total inscripciones: {4}</label>
+                           <Pager
+                              // onPageChange={handlePageClick}
+                              pageRangeDisplayed={5}
+                           // pageCount={pageCount}
+                           />
+                           <label>Total según filtro : {4}</label>
+                        </div>
+                     </td>
+                  </tr>
+               </TFooter>
             </Table>
          </Container>
 

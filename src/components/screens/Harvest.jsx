@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'
@@ -10,18 +10,42 @@ import Select from '../ui/Select'
 import { useForm } from '../../hooks/useForm'
 import { AppContext } from '../../context/AppContext'
 import moment from 'moment'
+import TFooter from '../table/TFooter'
 
-const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
+const limite = [
+  { value: 10, label: '10' },
+  { value: 25, label: '25' },
+  { value: 50, label: '50' },
+  { value: 100, label: '100' }
+]
 
 const Harvest = () => {
-  const { cosechas } = useContext(AppContext)
-  const [state, setstate] = useState(2)
-  const [{ filterRut, filterName, filterUser, filterKg }, onChangeValues] = useForm({
+  const { cosechas, getSheets, filtros } = useContext(AppContext)
+  const [{
+    filterRut,
+    filterName,
+    filterUser,
+    filterKg,
+    filterLimit,
+    filterFound,
+    filterCuartel,
+    filterSpecies
+  }, onChangeValues] = useForm({
     filterRut: '',
     filterName: '',
     filterUser: '',
-    filterKg: ''
+    filterKg: '',
+    filterLimit: 10
   })
+
+  // destructuring
+  const { especies, cuarteles, fundos } = filtros
+  // destructuring
+
+  const handlePageClick = (e) => {
+    let offset = (e.selected * filterLimit) % cosechas.fichas_totales
+    getSheets({ offset, filterLimit })
+  }
 
   return (
     <Container title="Lecturas de dispositivos de Cosechas" showMenu >
@@ -29,10 +53,9 @@ const Harvest = () => {
         <THead>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">
             <Th></Th>
-            <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-            <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-            <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-            <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
+            <Th><Select options={fundos} value={filterFound} onChange={onChangeValues} /></Th>
+            <Th><Select options={cuarteles} value={filterCuartel} onChange={onChangeValues} /></Th>
+            <Th><Select options={especies} value={filterSpecies} onChange={onChangeValues} /></Th>
 
             <Th>
               <input
@@ -74,15 +97,14 @@ const Harvest = () => {
                 value={filterUser}
                 onChange={onChangeValues} />
             </Th>
-            <Th></Th>
-            <Th></Th>
+            <Th>Limite</Th>
+            <Th><Select options={limite} value={filterLimit} onChange={onChangeValues} /></Th>
           </tr>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
             <Th>#</Th>
             <Th>fundo</Th>
             <Th>cuartel</Th>
             <Th>especie</Th>
-            <Th highlight>faena</Th>
             <Th>rut cosechero</Th>
             <Th>nombre cosechero</Th>
             <Th>cantidad</Th>
@@ -107,7 +129,6 @@ const Harvest = () => {
                 <Td children={l.lectura_relacion_ig.item_negocio.desc_item_negocio} />
                 <Td children={l.lectura_relacion_ig.cuartel.nombre} />
                 <Td children="especie" />
-                <Td children={l.rh_faena.desc_faena} />
                 <Td children={l.lectura_cosechero.rut_trabajador} />
                 <Td children={l.lectura_cosechero.nombre_cosechero} />
                 <Td align='text-right' children={l.peso} />
@@ -121,8 +142,22 @@ const Harvest = () => {
             ))
           }
         </TBody>
+        <TFooter>
+          <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
+            <td colSpan={14} className='p-2 w-full'>
+              <div className='flex justify-around items-center px-4'>
+                <label>Total Kilos: {cosechas.kilos_totales} KG</label>
+                <Pager
+                  // onPageChange={handlePageClick}
+                  pageRangeDisplayed={5}
+                // pageCount={pageCount}
+                />
+                <label>Total según filtro : {cosechas.kilos_pagina} KG</label>
+              </div>
+            </td>
+          </tr>
+        </TFooter>
       </Table>
-      <Pager />
     </Container>
   )
 }

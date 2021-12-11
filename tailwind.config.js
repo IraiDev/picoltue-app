@@ -4,13 +4,15 @@ module.exports = {
   theme: {
     extend: {
       maxHeight: {
-        '75vh': '75vh',
+        '75vh': '80vh',
       },
       minHeight: {
         'sb': '500px',
       },
       width: {
         table: '1550px',
+        table_md: '920px',
+        table_sm: '620px'
       }
     },
   },
