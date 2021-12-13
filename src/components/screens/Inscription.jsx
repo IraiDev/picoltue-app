@@ -385,6 +385,8 @@ const Inscription = () => {
    }
 
    useEffect(() => {
+      console.log(filterLimit)
+      console.log(filterCountry)
       toggleLoading()
       setPage(1)
       getSheets({
@@ -392,8 +394,8 @@ const Inscription = () => {
          limite: Number(filterLimit),
          rut_trabajador: filterRut,
          nombre_trabajador: filterName,
-         comuna: Number(filterCountry),
-         ciudad: Number(filterCity),
+         comuna: filterCountry,
+         ciudad: filterCity,
       })
    }, [filterCity, filterCountry, filterLimit])
 

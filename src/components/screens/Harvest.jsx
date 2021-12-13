@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'
@@ -20,7 +20,9 @@ const limite = [
 ]
 
 const Harvest = () => {
-  const { cosechas, getSheets, filtros } = useContext(AppContext)
+  const { cosechas, getSheets, filtros, getHarvest } = useContext(AppContext)
+  const [offSet, setOffSet] = useState(0)
+  const [page, setPage] = useState(0)
   const [{
     filterRut,
     filterName,
@@ -35,20 +37,60 @@ const Harvest = () => {
     filterName: '',
     filterUser: '',
     filterKg: '',
-    filterLimit: 10
+    filterLimit: 10,
+    filterFound: '',
+    filterCuartel: '',
+    filterSpecies: ''
   })
 
   // destructuring
   const { especies, cuarteles, fundos } = filtros
   // destructuring
 
-  const handlePageClick = (e) => {
-    let offset = (e.selected * filterLimit) % cosechas.fichas_totales
+  const handlePageClick = (e, value) => {
+    let offset = ((value - 1) * filterLimit) % cosechas.fichas_totales
+    setOffSet(offset)
+    setPage(value)
     getSheets({ offset, filterLimit })
   }
 
+  const handleInputSearch = (e) => {
+    e.preventDefault()
+    getHarvest({
+      especie: Number(filterSpecies),
+      fundo: Number(filterFound),
+      cuartel: Number(filterCuartel),
+      rut_cosechero: filterRut,
+      cantidad: Number(filterKg),
+      fecha_desde: '',
+      fecha_hasta: '',
+      usuario: filterUser,
+      nombre_cosechero: filterName,
+      offset: offSet,
+      limite: Number(filterLimit)
+    })
+  }
+
+  useEffect(() => {
+    getHarvest({
+      especie: Number(filterSpecies),
+      fundo: Number(filterFound),
+      cuartel: Number(filterCuartel),
+      rut_cosechero: filterRut,
+      cantidad: Number(filterKg),
+      fecha_desde: '',
+      fecha_hasta: '',
+      usuario: filterUser,
+      nombre_cosechero: filterName,
+      offset: 0,
+      limite: Number(filterLimit)
+    })
+  }, [filterFound, filterCuartel, filterSpecies, filterLimit])
+
   return (
-    <Container title="Lecturas de dispositivos de Cosechas" showMenu >
+    <Container
+      title="Lecturas de dispositivos de Cosechas"
+      showMenu >
       <Table width="w-table">
         <THead>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">
@@ -63,49 +105,65 @@ const Harvest = () => {
             <Th><Select options={especies} value={filterSpecies} onChange={onChangeValues} /></Th>
 
             <Th>
-              <input
-                className="p-1 rounded-md w-24 focus:outline-none focus:shadow-md focus:ring transition duration-200"
-                type="text"
-                name="filterRut"
-                value={filterRut}
-                onChange={onChangeValues} />
+              <form onSubmit={handleInputSearch}>
+                <input
+                  className="p-1 rounded-md w-24 focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                  type="text"
+                  name="filterRut"
+                  value={filterRut}
+                  placeholder='Escriba el rut'
+                  onChange={onChangeValues} />
+                <button type='submit' className='hidden' />
+              </form>
             </Th>
             <Th>
-              <input
-                className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
-                type="text"
-                name="filterName"
-                value={filterName}
-                onChange={onChangeValues} />
+              <form onSubmit={handleInputSearch}>
+                <input
+                  className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                  type="text"
+                  name="filterName"
+                  value={filterName}
+                  placeholder='Escriba el nombre'
+                  onChange={onChangeValues} />
+                <button type='submit' className='hidden' />
+              </form>
             </Th>
             <Th>
-              <input
-                className="p-1 w-16 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
-                type="text"
-                name="filterKg"
-                value={filterKg}
-                onChange={onChangeValues}
-                onKeyPress={(event) => {
-                  if (!/[0-9]/.test(event.key)) {
-                    event.preventDefault();
-                  }
-                }} />
+              <form onSubmit={handleInputSearch}>
+                <input
+                  className="p-1 w-16 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                  type="text"
+                  name="filterKg"
+                  value={filterKg}
+                  onChange={onChangeValues}
+                  placeholder='Escriba la cantidad'
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }} />
+                <button type='submit' className='hidden' />
+              </form>
             </Th>
             <Th></Th>
             <Th></Th>
             <Th></Th>
             <Th>
-              <input
-                className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
-                type="text"
-                name="filterUser"
-                value={filterUser}
-                onChange={onChangeValues} />
+              <form onSubmit={handleInputSearch}>
+                <input
+                  className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                  type="text"
+                  name="filterUser"
+                  value={filterUser}
+                  placeholder='Escriba el rut'
+                  onChange={onChangeValues} />
+                <button type='submit' className='hidden' />
+              </form>
             </Th>
             <th colSpan={2}>
               <div className='flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1'>
                 <label >Limite</label>
-                <Select options={limite} value={filterLimit} onChange={onChangeValues} />
+                <Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} />
               </div>
             </th>
           </tr>

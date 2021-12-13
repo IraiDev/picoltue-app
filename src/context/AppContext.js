@@ -84,15 +84,15 @@ const AppProvider = ({ children }) => {
          let data = []
          data = body.lecturas.map(l => {
             return {
-               Fundo: l.lectura_relacion_ig.item_negocio.desc_item_negocio,
-               Cuartel: l.lectura_relacion_ig.cuartel.nombre,
-               Especie: 'especie',
-               Rut_Cosechero: l.lectura_cosechero.rut_trabajador,
-               Nombre_Cosechero: l.lectura_cosechero.nombre_cosechero,
-               Cantidad: l.peso,
-               Unidad_de_medida: l.rh_faena.tipo_medida.desc_tipo_med,
-               Hora_lectura: moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss'),
-               Equipo: 'equipo',
+               fundo: l.lectura_relacion_ig.item_negocio.desc_item_negocio,
+               cuartel: l.lectura_relacion_ig.cuartel.nombre,
+               especie: 'especie',
+               rut_cosechero: l.lectura_cosechero.rut_trabajador,
+               nombre_cosechero: l.lectura_cosechero.nombre_cosechero,
+               cantidad: l.peso,
+               unidad: l.rh_faena.tipo_medida.desc_tipo_med,
+               hora: moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss'),
+               equipo: 'equipo',
                usuario: 'usuario',
                idServ: 'is serv',
                idLocal: 'is local'
@@ -186,7 +186,7 @@ const AppProvider = ({ children }) => {
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
          validateSeesion()
-         getHarvest()
+         // getHarvest()
          // getSheets()
          getFilters()
       }
@@ -194,7 +194,7 @@ const AppProvider = ({ children }) => {
 
    return (
       <AppContext.Provider value={{
-         login, logout, user, cosechas, inscripciones, insertSheet, updateSheet, filtros, getSheets, excelData
+         login, logout, user, inscripciones, cosechas, insertSheet, updateSheet, filtros, getSheets, excelData, getHarvest
       }}>
          {children}
       </AppContext.Provider>
