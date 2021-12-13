@@ -40,19 +40,19 @@ const SideBar = () => {
           to="/cosechas"
           name="lectura de cosechas"
           icon="fas fa-warehouse"
-        // onClick={toggleSidebar}
+          onClick={toggleSidebar}
         />
         <LiNav
           to="/personal"
           name="ficha de inscripcion"
           icon="far fa-address-book"
-        // onClick={toggleSidebar}
+          onClick={toggleSidebar}
         />
         <LiNav
           to="/mantenedor-usuario"
           name="Mant. Usuarios"
           icon="fas fa-user-cog"
-        // onClick={toggleSidebar}
+          onClick={toggleSidebar}
         />
       </ul>
       <Button

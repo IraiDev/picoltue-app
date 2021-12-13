@@ -52,7 +52,12 @@ const Harvest = () => {
       <Table width="w-table">
         <THead>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">
-            <Th></Th>
+            <Th><button
+              className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-400 hover:bg-blue-500 transition duration-500 focus:outline-none'
+            //  onClick={() => setValues(initForm)} 
+            >
+              reestablecer
+            </button></Th>
             <Th><Select options={fundos} value={filterFound} onChange={onChangeValues} /></Th>
             <Th><Select options={cuarteles} value={filterCuartel} onChange={onChangeValues} /></Th>
             <Th><Select options={especies} value={filterSpecies} onChange={onChangeValues} /></Th>
@@ -97,8 +102,12 @@ const Harvest = () => {
                 value={filterUser}
                 onChange={onChangeValues} />
             </Th>
-            <Th>Limite</Th>
-            <Th><Select options={limite} value={filterLimit} onChange={onChangeValues} /></Th>
+            <th colSpan={2}>
+              <div className='flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1'>
+                <label >Limite</label>
+                <Select options={limite} value={filterLimit} onChange={onChangeValues} />
+              </div>
+            </th>
           </tr>
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
             <Th>#</Th>
@@ -147,11 +156,7 @@ const Harvest = () => {
             <td colSpan={14} className='p-2 w-full'>
               <div className='flex justify-around items-center px-4'>
                 <label>Total Kilos: {cosechas.kilos_totales} KG</label>
-                <Pager
-                  // onPageChange={handlePageClick}
-                  pageRangeDisplayed={5}
-                // pageCount={pageCount}
-                />
+
                 <label>Total según filtro : {cosechas.kilos_pagina} KG</label>
               </div>
             </td>

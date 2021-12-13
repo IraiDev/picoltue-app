@@ -20,6 +20,7 @@ import { useToggle } from '../../hooks/useToggle'
 import { AppContext } from '../../context/AppContext'
 import TFooter from '../table/TFooter'
 import { useDependSelect } from '../../hooks/useDependSelect'
+import { UiContext } from '../../context/UiContext'
 
 const limite = [
    { value: 10, label: '10' },
@@ -34,30 +35,36 @@ const initForm = {
    secondName: '',
    lastName: '',
    secondLastName: '',
-   date: ''
+   date: '',
+   city: '',
+   country: ''
 }
 
 const Inscription = () => {
 
    const { inscripciones, updateSheet, insertSheet, getSheets, filtros } = useContext(AppContext)
+   const { toggleLoading } = useContext(UiContext)
 
    const [showModal, toggleModal] = useToggle(false)
    const [sheet, setSheet] = useState(null)
    const [values, setValues] = useState(initForm)
+   const [page, setPage] = useState(1)
+   const [offSet, setOffSet] = useState(0)
 
    // destructuring
-   const { rut, firstName, secondName, lastName, secondLastName, date } = values
+   const { rut, firstName, secondName, lastName, secondLastName, date, city, country } = values
    const { ciudades, comunas } = filtros
    // destructuring
 
-   const [{ filterRut, filterName, filterCountry, filterCity, filterLimit }, onChangeValues] = useForm({
+   const [{ filterRut, filterName, filterCountry, filterCity, filterLimit }, onChangeValues, reset] = useForm({
       filterRut: '',
-      filterName: '',
+      filterName: 'ignacio',
       filterLimit: 10,
       filterCountry: '',
       filterCity: ''
    })
-   const city = useDependSelect(filterCountry, ciudades)
+   const cityTable = useDependSelect(filterCountry, ciudades)
+   const cityForm = useDependSelect(country, ciudades)
 
    const handleCloseModal = () => {
       toggleModal()
@@ -160,12 +167,24 @@ const Inscription = () => {
          segundo_nombre: secondName,
          apellido_p: lastName,
          apellido_m: secondLastName,
+         ciudad: city,
+         comuna: country,
       }
 
-      insertSheet({ payload })
+      const filters = {
+         offset: offSet,
+         limite: Number(filterLimit),
+         rut_trabajador: filterRut,
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      }
+
+      insertSheet({ payload, filters })
       toggleModal()
       setSheet(null)
       setValues(initForm)
+      toggleLoading()
 
       console.log('insert data', payload)
    }
@@ -266,12 +285,24 @@ const Inscription = () => {
          segundo_nombre: secondName,
          apellido_p: lastName,
          apellido_m: secondLastName,
+         ciudad: city,
+         comuna: country,
       }
 
-      updateSheet({ payload })
+      const filters = {
+         offset: offSet,
+         limite: Number(filterLimit),
+         rut_trabajador: filterRut,
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      }
+
+      updateSheet({ payload, filters })
       toggleModal()
       setSheet(null)
       setValues(initForm)
+      toggleLoading()
 
       console.log('update data', payload)
    }
@@ -284,8 +315,18 @@ const Inscription = () => {
          rut_trabajador,
          apellido_materno,
          apellido_paterno,
-         fecha_nacto
+         fecha_nacto,
+         id_ciudad,
+         id_comuna
       } = i
+
+      console.log(id_comuna)
+      let co = { value: '' }, ci = { value: '' }
+
+      if (id_comuna || id_ciudad) {
+         co = comunas.find(c => Number(c.value) === id_comuna)
+         ci = ciudades.find(c => Number(c.value) === id_ciudad)
+      }
 
       setSheet(i)
       setValues({
@@ -294,18 +335,58 @@ const Inscription = () => {
          secondName: segundo_nombre,
          lastName: apellido_paterno,
          secondLastName: apellido_materno,
-         date: moment(new Date(fecha_nacto)).format('yyyy-MM-DD')
+         date: moment(new Date(fecha_nacto)).format('yyyy-MM-DD'),
+         city: ci.value,
+         country: co.value
       })
 
       toggleModal()
    }
 
-   const handlePageClick = (e) => {
-      let offset = (e.selected * Number(filterLimit)) % inscripciones.fichas_totales
-      getSheets({ offset, limite: Number(filterLimit) })
+   const handleOnChangePage = (e, value) => {
+      let offset = ((value - 1) * Number(filterLimit)) % inscripciones.fichas_totales
+      setOffSet(offset)
+      setPage(value)
+      getSheets({
+         offset,
+         limite: Number(filterLimit),
+         rut_trabajador: filterRut,
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      })
+      toggleLoading()
+   }
+
+   const searchRutOrRut = (e) => {
+      e.preventDefault()
+      getSheets({
+         offset: 0,
+         limite: Number(filterLimit),
+         rut_trabajador: filterRut,
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      })
+      toggleLoading()
+   }
+
+   const handleReset = () => {
+      reset()
+      getSheets({
+         offset: 0,
+         limite: Number(filterLimit),
+         rut_trabajador: filterRut,
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      })
+      toggleLoading()
    }
 
    useEffect(() => {
+      toggleLoading()
+      setPage(1)
       getSheets({
          offset: 0,
          limite: Number(filterLimit),
@@ -324,28 +405,46 @@ const Inscription = () => {
             <Table width='w-table_md'>
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
-                     <Th></Th>
-                     <Th></Th>
+                     <th colSpan={2}>
+                        <button
+                           className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none'
+                           onClick={handleReset} >
+                           reestablecer
+                        </button>
+                     </th>
                      <Th>
-                        <input
-                           className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
-                           type="text"
-                           name="filterRut"
-                           value={filterRut}
-                           onChange={onChangeValues} />
+                        <form onSubmit={searchRutOrRut}>
+                           <input
+                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              type="text"
+                              name="filterRut"
+                              value={filterRut}
+                              placeholder='Escriba el rut..'
+                              onChange={onChangeValues} />
+                           <button className='hidden' type='submit'></button>
+                        </form>
                      </Th>
                      <Th>
-                        <input
-                           className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
-                           type="text"
-                           name="filterName"
-                           value={filterName}
-                           onChange={onChangeValues} />
+                        <form onSubmit={searchRutOrRut}>
+                           <input
+                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              type="text"
+                              name="filterName"
+                              value={filterName}
+                              placeholder='Escriba el nombre...'
+                              onChange={onChangeValues} />
+                           <button className='hidden' type='submit'></button>
+                        </form>
                      </Th>
                      <Th></Th>
                      <Th><Select options={comunas} value={filterCountry} name='filterCountry' onChange={onChangeValues} /></Th>
-                     <Th><Select options={city} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
-                     <Th><Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} /></Th>
+                     <Th><Select options={cityTable} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
+                     <Th>
+                        <div className='flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1 w-max'>
+                           <label >Limite</label>
+                           <Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} />
+                        </div>
+                     </Th>
                   </tr>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
                      <Th>#</Th>
@@ -355,7 +454,7 @@ const Inscription = () => {
                      <Th>telefono</Th>
                      <Th>comuna</Th>
                      <Th>ciudad</Th>
-                     <Th>limite</Th>
+                     <Th>Acciones</Th>
                   </tr>
                </THead>
                <TBody>
@@ -397,7 +496,8 @@ const Inscription = () => {
                         <div className='flex justify-around items-center px-4'>
                            <label>Total inscripciones: {inscripciones.fichas_totales}</label>
                            <Pager
-                              onPageChange={handlePageClick}
+                              page={page}
+                              onPageChange={handleOnChangePage}
                               pageRangeDisplayed={5}
                               limit={filterLimit}
                               totals={inscripciones.fichas_totales}
@@ -481,24 +581,48 @@ const Inscription = () => {
                      })} />
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                     field="RUT"
-                     name="rut"
-                     placeholder="ej: 12.345.678-9"
-                     value={prettifyRut(rut)}
+                  <section className='flex items-center gap-2'>
+                     <label className='px-2'>Comuna:</label>
+                     <Select
+                        className='w-full p-2 bg-gray-100 rounded-md'
+                        options={comunas}
+                        value={country}
+                        name='country'
+                        onChange={e => setValues({
+                           ...values,
+                           country: e.target.value
+                        })} />
+                  </section>
+                  <section className='flex items-center gap-2'>
+                     <label className='px-2'>Comuna:</label>
+                     <Select
+                        className='w-full p-2 bg-gray-100 rounded-md'
+                        options={cityForm}
+                        value={city}
+                        name='city'
+                        onChange={e => setValues({
+                           ...values,
+                           city: e.target.value
+                        })} />
+                  </section>
+
+
+                  {/* <Input
+                     field="comuna"
+                     name="country"
+                     value={country}
                      onChange={e => setValues({
                         ...values,
-                        rut: e.target.value
+                        country: e.target.value
                      })} />
                   <Input
-                     type="date"
-                     field="Fecha de nacimiento"
-                     name="date"
-                     value={date}
+                     field="Ciudad"
+                     name="city"
+                     value={city}
                      onChange={e => setValues({
                         ...values,
-                        date: e.target.value
-                     })} />
+                        city: e.target.value
+                     })} /> */}
                </div>
                <div>
                   {/* <div className="flex items-center gap-4 w-1/2 pr-2">
@@ -561,7 +685,6 @@ const Inscription = () => {
                />
             </footer>
          </Modal>
-
       </>
    )
 }

@@ -6,11 +6,14 @@ export const UiContext = createContext()
 const UiProvider = ({ children }) => {
 
   const [showSidebar, toggleSidebar] = useToggle(false)
+  const [ShowLoading, toggleLoading] = useToggle(false)
 
   return (
     <UiContext.Provider value={{
       toggleSidebar,
-      showSidebar
+      showSidebar,
+      ShowLoading,
+      toggleLoading
     }}>
       {children}
     </UiContext.Provider>

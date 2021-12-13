@@ -3,6 +3,7 @@ import UiProvider from './context/UiContext'
 import AppRoutes from './routes/AppRoutes'
 
 const App = () => {
+
   return (
     <UiProvider>
       <AppProvider>

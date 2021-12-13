@@ -1,10 +1,12 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchUnToken } from '../helpers/fetch'
+import { UiContext } from './UiContext'
 
 export const AppContext = createContext()
 
 const AppProvider = ({ children }) => {
+   const { toggleLoading } = useContext(UiContext)
    const [user, setUser] = useState({ ok: false })
    const [cosechas, setCosechas] = useState({})
    const [inscripciones, setInscripciones] = useState({})
@@ -73,6 +75,7 @@ const AppProvider = ({ children }) => {
    const getSheets = async (data) => {
       const resp = await fetchToken('fichas', data, 'POST')
       const body = await resp.json()
+      toggleLoading()
       // console.log('fichas: ', body)
       if (body.ok) {
          setInscripciones(body)
@@ -93,7 +96,7 @@ const AppProvider = ({ children }) => {
       const { ok, response } = body
       console.log('fichas: ', body)
       if (ok) {
-         getSheets()
+         getSheets(filters)
       }
       else {
          Alert({
@@ -111,7 +114,7 @@ const AppProvider = ({ children }) => {
       const { ok } = body
       console.log('fichas: ', body)
       if (ok) {
-         getSheets()
+         getSheets(filters)
       }
       else {
          Alert({
