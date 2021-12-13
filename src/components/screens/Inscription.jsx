@@ -13,12 +13,13 @@ import THead from '../table/THead'
 import TBody from '../table/TBody'
 import { useForm } from '../../hooks/useForm'
 import { checkRut, prettifyRut } from 'react-rut-formatter'
-import { Alert } from '../../helpers/alerts';
+import { Alert } from '../../helpers/alerts'
 import { checkForms } from '../../helpers/helpers'
 import moment from 'moment'
 import { useToggle } from '../../hooks/useToggle'
 import { AppContext } from '../../context/AppContext'
 import TFooter from '../table/TFooter'
+import { useDependSelect } from '../../hooks/useDependSelect'
 
 const limite = [
    { value: 10, label: '10' },
@@ -43,7 +44,6 @@ const Inscription = () => {
    const [showModal, toggleModal] = useToggle(false)
    const [sheet, setSheet] = useState(null)
    const [values, setValues] = useState(initForm)
-   const [cityMacth, setCityMatch] = useState([])
 
    // destructuring
    const { rut, firstName, secondName, lastName, secondLastName, date } = values
@@ -57,8 +57,7 @@ const Inscription = () => {
       filterCountry: '',
       filterCity: ''
    })
-
-   const pageCount = Math.ceil(inscripciones.fichas_totales / filterLimit)
+   const city = useDependSelect(filterCountry, ciudades)
 
    const handleCloseModal = () => {
       toggleModal()
@@ -302,20 +301,20 @@ const Inscription = () => {
    }
 
    const handlePageClick = (e) => {
-      let offset = (e.selected * filterLimit) % inscripciones.fichas_totales
-      getSheets({ offset, filterLimit })
+      let offset = (e.selected * Number(filterLimit)) % inscripciones.fichas_totales
+      getSheets({ offset, limite: Number(filterLimit) })
    }
 
    useEffect(() => {
-
-      const f = ciudades.filter(c => c.id_comuna === Number(filterCountry))
-      console.log('ciudades: ', f, 'filterCountry: ', filterCountry)
-
-      filterCountry === '' ?
-         setCityMatch(ciudades)
-         : setCityMatch(ciudades.filter(c => c.id_comuna === Number(filterCountry)))
-
-   }, [filterCountry])
+      getSheets({
+         offset: 0,
+         limite: Number(filterLimit),
+         rut_trabajador: filterRut,
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      })
+   }, [filterCity, filterCountry, filterLimit])
 
    return (
       <>
@@ -345,7 +344,7 @@ const Inscription = () => {
                      </Th>
                      <Th></Th>
                      <Th><Select options={comunas} value={filterCountry} name='filterCountry' onChange={onChangeValues} /></Th>
-                     <Th><Select options={cityMacth} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
+                     <Th><Select options={city} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
                      <Th><Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} /></Th>
                   </tr>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
@@ -400,9 +399,10 @@ const Inscription = () => {
                            <Pager
                               onPageChange={handlePageClick}
                               pageRangeDisplayed={5}
-                              pageCount={pageCount}
+                              limit={filterLimit}
+                              totals={inscripciones.fichas_totales}
                            />
-                           <label>Total según filtro : {inscripciones.fichas_totales}</label>
+                           <label>Total según filtro : {inscripciones.fichas_pagina}</label>
                         </div>
                      </td>
                   </tr>

@@ -70,7 +70,7 @@ const AppProvider = ({ children }) => {
       }
    }
 
-   const getSheets = async (data = { limite: 10 }) => {
+   const getSheets = async (data) => {
       const resp = await fetchToken('fichas', data, 'POST')
       const body = await resp.json()
       // console.log('fichas: ', body)
@@ -134,8 +134,6 @@ const AppProvider = ({ children }) => {
          data.push({ [f]: body.response })
       }
 
-      console.log('data: ', data)
-
       setFiltros({
          fundos: data[0].fundos.map(f => ({ value: f.id_item_negocio, label: f.desc_item_negocio })),
          cuarteles: data[1].cuarteles.map(c => ({ value: c.id_centro_costo, label: c.nombre })),
@@ -146,12 +144,12 @@ const AppProvider = ({ children }) => {
    }
 
    useEffect(() => {
-      console.log('se lanzo el efecto')
+      // console.log('se lanzo el efecto')
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
          validateSeesion()
          getHarvest()
-         getSheets()
+         // getSheets()
          getFilters()
       }
    }, [])
