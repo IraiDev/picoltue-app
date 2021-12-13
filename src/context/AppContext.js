@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Alert } from '../helpers/alerts'
 import { fetchToken, fetchUnToken } from '../helpers/fetch'
@@ -11,6 +12,7 @@ const AppProvider = ({ children }) => {
    const [cosechas, setCosechas] = useState({})
    const [inscripciones, setInscripciones] = useState({})
    const [filtros, setFiltros] = useState({})
+   const [excelData, setExcelData] = useState([])
 
    const login = async (data) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
@@ -61,6 +63,7 @@ const AppProvider = ({ children }) => {
       // console.log('cosechas: ', body)
       if (body.ok) {
          setCosechas(body)
+         getHarvestExport(data)
       }
       else {
          Alert({
@@ -69,6 +72,38 @@ const AppProvider = ({ children }) => {
             showCancelButton: false,
             timer: 6000
          })
+      }
+   }
+
+
+   const getHarvestExport = async (data) => {
+      const resp = await fetchToken('lecturas', data, 'POST')
+      const body = await resp.json()
+      console.log('fichas: ', body)
+      if (body.ok) {
+         let data = []
+         data = body.lecturas.map(l => {
+            return {
+               Fundo: l.lectura_relacion_ig.item_negocio.desc_item_negocio,
+               Cuartel: l.lectura_relacion_ig.cuartel.nombre,
+               Especie: 'especie',
+               Rut_Cosechero: l.lectura_cosechero.rut_trabajador,
+               Nombre_Cosechero: l.lectura_cosechero.nombre_cosechero,
+               Cantidad: l.peso,
+               Unidad_de_medida: l.rh_faena.tipo_medida.desc_tipo_med,
+               Hora_lectura: moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss'),
+               Equipo: 'equipo',
+               usuario: 'usuario',
+               idServ: 'is serv',
+               idLocal: 'is local'
+            }
+         })
+
+         console.log('data: ', data)
+         setExcelData(data)
+      }
+      else {
+         console.log('error export excel data')
       }
    }
 
@@ -159,7 +194,7 @@ const AppProvider = ({ children }) => {
 
    return (
       <AppContext.Provider value={{
-         login, logout, user, cosechas, inscripciones, insertSheet, updateSheet, filtros, getSheets
+         login, logout, user, cosechas, inscripciones, insertSheet, updateSheet, filtros, getSheets, excelData
       }}>
          {children}
       </AppContext.Provider>

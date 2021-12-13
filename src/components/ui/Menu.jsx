@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Button from './Button'
 import OnOutsiceClick from 'react-outclick'
 import { useWindowSize } from '../../hooks/useSize'
+import { AppContext } from '../../context/AppContext'
+import ExportExcel from './ExportExcel'
 
 const Menu = () => {
+   const { excelData } = useContext(AppContext)
    const { width } = useWindowSize()
    const [showMenu, setShowMenu] = useState(false)
 
@@ -28,13 +31,14 @@ const Menu = () => {
                absolute top-12 right-0 z-40 w-60 bg-white shadow-2xl border rounded-md
                animate__animated animate__fadeIn animate__faster
                `}>
-                  <Button
+                  {/* <Button
                      className="hover:bg-gray-200"
                      type="iconText"
                      icon="fas fa-file-excel text-green-500"
                      name="Excel"
                      block
-                     onClick={() => console.log('as;ldknma;sldkmas')} />
+                     onClick={getDataExport} /> */}
+                  <ExportExcel onClick={() => setShowMenu(!showMenu)} data={excelData} />
                   <hr />
                   <Button
                      type="iconText"
@@ -50,6 +54,7 @@ const Menu = () => {
                      name="Especifico"
                      block />
                </section>
+
             }
          </div>
       </OnOutsiceClick>
