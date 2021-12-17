@@ -176,7 +176,7 @@ const Harvest = () => {
             <Th>nombre cosechero</Th>
             <Th>cantidad</Th>
             <Th>U. medida</Th>
-            <Th>hora. lectura</Th>
+            <Th>fecha lectura</Th>
             <Th>equipo</Th>
             <Th>usuario</Th>
             <Th>id serv</Th>
@@ -201,10 +201,10 @@ const Harvest = () => {
                 <Td align='text-right' children={l.peso} />
                 <Td align='text-left' children={l.rh_faena.tipo_medida.desc_tipo_med} />
                 <Td children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
-                <Td children="equipo" />
+                <Td children={l.id_dispo} />
                 <Td children="usuario" />
-                <Td children="idserv" />
-                <Td children="idlocal" />
+                <Td children={l.id} />
+                <Td children={l.id_local} />
               </tr>
             ))
           }

@@ -44,8 +44,8 @@ const ExportExcel = ({ data = [], onClick }) => {
             </thead>
             <tbody>
                {data.length > 0 &&
-                  data.map((d) => (
-                     <tr>
+                  data.map((d, i) => (
+                     <tr key={i}>
                         <td>{d.fundo}</td>
                         <td>{d.cuartel}</td>
                         <td>{d.especie}</td>

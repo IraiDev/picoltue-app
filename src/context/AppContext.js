@@ -6,9 +6,15 @@ import { UiContext } from './UiContext'
 
 export const AppContext = createContext()
 
+const token = window.localStorage.getItem('token-picoltue')
+
+const isToken = token ? { ok: true, usuario: [] } : { ok: false }
+
+const initUser = isToken
+
 const AppProvider = ({ children }) => {
    const { toggleLoading } = useContext(UiContext)
-   const [user, setUser] = useState({ ok: false })
+   const [user, setUser] = useState(initUser)
    const [cosechas, setCosechas] = useState({})
    const [inscripciones, setInscripciones] = useState({})
    const [filtros, setFiltros] = useState({})
@@ -18,6 +24,9 @@ const AppProvider = ({ children }) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
       const body = await resp.json()
       const { ok, usuario, token, msg } = body
+
+      toggleLoading()
+
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
          setUser({ ok, usuario })
@@ -37,6 +46,8 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('auth/renew')
       const body = await resp.json()
       const { ok, usuario, token } = body
+
+      toggleLoading()
       // console.log('user: ', body)
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
@@ -60,7 +71,7 @@ const AppProvider = ({ children }) => {
    const getHarvest = async (data = {}) => {
       const resp = await fetchToken('lecturas', data, 'POST')
       const body = await resp.json()
-      // console.log('cosechas: ', body)
+      console.log('cosechas: ', body)
       if (body.ok) {
          setCosechas(body)
          getHarvestExport(data)
@@ -79,7 +90,7 @@ const AppProvider = ({ children }) => {
    const getHarvestExport = async (data) => {
       const resp = await fetchToken('lecturas', data, 'POST')
       const body = await resp.json()
-      console.log('fichas: ', body)
+      // console.log('fichas: ', body)
       if (body.ok) {
          let data = []
          data = body.lecturas.map(l => {
@@ -98,8 +109,6 @@ const AppProvider = ({ children }) => {
                idLocal: 'is local'
             }
          })
-
-         console.log('data: ', data)
          setExcelData(data)
       }
       else {
@@ -129,7 +138,7 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('fichas/insert', payload, 'POST')
       const body = await resp.json()
       const { ok, response } = body
-      console.log('fichas: ', body)
+      console.log('fichas insert: ', body)
       if (ok) {
          getSheets(filters)
       }
@@ -147,7 +156,7 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('fichas/update', payload, 'POST')
       const body = await resp.json()
       const { ok } = body
-      console.log('fichas: ', body)
+      console.log('fichas update: ', body)
       if (ok) {
          getSheets(filters)
       }
@@ -189,6 +198,7 @@ const AppProvider = ({ children }) => {
          // getHarvest()
          // getSheets()
          getFilters()
+         toggleLoading()
       }
    }, [])
 

@@ -358,7 +358,7 @@ const Inscription = () => {
       toggleLoading()
    }
 
-   const searchRutOrRut = (e) => {
+   const onSearch = (e) => {
       e.preventDefault()
       getSheets({
          offset: 0,
@@ -394,8 +394,8 @@ const Inscription = () => {
          limite: Number(filterLimit),
          rut_trabajador: filterRut,
          nombre_trabajador: filterName,
-         comuna: filterCountry,
-         ciudad: filterCity,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
       })
    }, [filterCity, filterCountry, filterLimit])
 
@@ -415,7 +415,7 @@ const Inscription = () => {
                         </button>
                      </th>
                      <Th>
-                        <form onSubmit={searchRutOrRut}>
+                        <form onSubmit={onSearch}>
                            <input
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
@@ -427,7 +427,7 @@ const Inscription = () => {
                         </form>
                      </Th>
                      <Th>
-                        <form onSubmit={searchRutOrRut}>
+                        <form onSubmit={onSearch}>
                            <input
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
