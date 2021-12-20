@@ -31,14 +31,7 @@ const Menu = () => {
                absolute top-12 right-0 z-40 w-60 bg-white shadow-2xl border rounded-md
                animate__animated animate__fadeIn animate__faster
                `}>
-                  {/* <Button
-                     className="hover:bg-gray-200"
-                     type="iconText"
-                     icon="fas fa-file-excel text-green-500"
-                     name="Excel"
-                     block
-                     onClick={getDataExport} /> */}
-                  <ExportExcel onClick={() => setShowMenu(!showMenu)} data={excelData} />
+                  <ExportExcel onClick={() => setShowMenu(!showMenu)} data />
                   <hr />
                   <Button
                      type="iconText"

@@ -4,7 +4,7 @@ const ExportExcel = ({ data = [], onClick }) => {
 
    return (
       <>
-         <div onClick={onClick}>
+         <div disabled onClick={onClick}>
             <ReactHTMLTableToExcel
                id="test-table-xls-button"
                className="w-full relative p-1.5 border-2 border-transparent hover:border-green-400 z-20 transition duration-300"

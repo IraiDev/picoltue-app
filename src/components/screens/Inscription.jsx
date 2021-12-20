@@ -344,7 +344,7 @@ const Inscription = () => {
    }
 
    const handleOnChangePage = (e, value) => {
-      let offset = ((value - 1) * Number(filterLimit)) % inscripciones.fichas_totales
+      let offset = ((value - 1) * Number(filterLimit)) % inscripciones.fichas_pagina
       setOffSet(offset)
       setPage(value)
       getSheets({
@@ -502,7 +502,7 @@ const Inscription = () => {
                               onPageChange={handleOnChangePage}
                               pageRangeDisplayed={5}
                               limit={filterLimit}
-                              totals={inscripciones.fichas_totales}
+                              totals={inscripciones.fichas_pagina}
                            />
                            <label>Total según filtro : {inscripciones.fichas_pagina}</label>
                         </div>

@@ -20,9 +20,9 @@ const limite = [
 ]
 
 const Harvest = () => {
-  const { cosechas, getSheets, filtros, getHarvest } = useContext(AppContext)
+  const { cosechas, filtros, getHarvest } = useContext(AppContext)
   const [offSet, setOffSet] = useState(0)
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(1)
   const [{
     filterRut,
     filterName,
@@ -45,16 +45,29 @@ const Harvest = () => {
 
   // destructuring
   const { especies, cuarteles, fundos } = filtros
+  const { lecturas, kilos_filtro, kilos_totales, total_lecturas, total_lecturas_filtro } = cosechas
   // destructuring
 
-  const handlePageClick = (e, value) => {
-    let offset = ((value - 1) * filterLimit) % cosechas.fichas_totales
+  const handleOnChangePage = (e, value) => {
+    let offset = ((value - 1) * filterLimit) % total_lecturas_filtro
     setOffSet(offset)
     setPage(value)
-    getSheets({ offset, filterLimit })
+    getHarvest({
+      especie: Number(filterSpecies),
+      fundo: Number(filterFound),
+      cuartel: Number(filterCuartel),
+      rut_cosechero: filterRut,
+      cantidad: Number(filterKg),
+      fecha_desde: '',
+      fecha_hasta: '',
+      usuario: filterUser,
+      nombre_cosechero: filterName,
+      offset,
+      limite: Number(filterLimit)
+    })
   }
 
-  const handleInputSearch = (e) => {
+  const onSearch = (e) => {
     e.preventDefault()
     getHarvest({
       especie: Number(filterSpecies),
@@ -72,6 +85,7 @@ const Harvest = () => {
   }
 
   useEffect(() => {
+    setPage(1)
     getHarvest({
       especie: Number(filterSpecies),
       fundo: Number(filterFound),
@@ -100,12 +114,11 @@ const Harvest = () => {
             >
               reestablecer
             </button></Th>
-            <Th><Select options={fundos} value={filterFound} onChange={onChangeValues} /></Th>
-            <Th><Select options={cuarteles} value={filterCuartel} onChange={onChangeValues} /></Th>
-            <Th><Select options={especies} value={filterSpecies} onChange={onChangeValues} /></Th>
-
+            <Th><Select options={fundos} value={filterFound} name='filterFound' onChange={onChangeValues} /></Th>
+            <Th><Select options={cuarteles} value={filterCuartel} name='filterCuartel' onChange={onChangeValues} /></Th>
+            <Th><Select options={especies} value={filterSpecies} name='filterSpecies' onChange={onChangeValues} /></Th>
             <Th>
-              <form onSubmit={handleInputSearch}>
+              <form onSubmit={onSearch}>
                 <input
                   className="p-1 rounded-md w-24 focus:outline-none focus:shadow-md focus:ring transition duration-200"
                   type="text"
@@ -117,7 +130,7 @@ const Harvest = () => {
               </form>
             </Th>
             <Th>
-              <form onSubmit={handleInputSearch}>
+              <form onSubmit={onSearch}>
                 <input
                   className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                   type="text"
@@ -129,7 +142,7 @@ const Harvest = () => {
               </form>
             </Th>
             <Th>
-              <form onSubmit={handleInputSearch}>
+              <form onSubmit={onSearch}>
                 <input
                   className="p-1 w-16 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                   type="text"
@@ -149,7 +162,7 @@ const Harvest = () => {
             <Th></Th>
             <Th></Th>
             <Th>
-              <form onSubmit={handleInputSearch}>
+              <form onSubmit={onSearch}>
                 <input
                   className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                   type="text"
@@ -186,23 +199,23 @@ const Harvest = () => {
         <TBody>
           {
             Object.keys(cosechas).length > 0 &&
-            cosechas.lecturas.map((l, i) => (
+            lecturas.map((l, i) => (
               <tr key={i} className="text-gray-700 text-sm border-b w-max">
                 <Td borderLeft={false}>
                   <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md">
                     {i + 1}
                   </span>
                 </Td>
-                <Td children={l.lectura_relacion_ig.item_negocio.desc_item_negocio} />
-                <Td children={l.lectura_relacion_ig.cuartel.nombre} />
-                <Td children="especie" />
-                <Td children={l.lectura_cosechero.rut_trabajador} />
-                <Td children={l.lectura_cosechero.nombre_cosechero} />
+                <Td children={l.desc_item_negocio} />
+                <Td children={l.desc_cuartel} />
+                <Td children={l.desc_especie} />
+                <Td children={l.rut_trabajador} />
+                <Td children={l.nombre_cosechero} />
                 <Td align='text-right' children={l.peso} />
-                <Td align='text-left' children={l.rh_faena.tipo_medida.desc_tipo_med} />
+                <Td align='text-left' children={l.desc_tipo_med} />
                 <Td children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
                 <Td children={l.id_dispo} />
-                <Td children="usuario" />
+                <Td children={l.rut_supervisor} />
                 <Td children={l.id} />
                 <Td children={l.id_local} />
               </tr>
@@ -213,9 +226,15 @@ const Harvest = () => {
           <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
             <td colSpan={14} className='p-2 w-full'>
               <div className='flex justify-around items-center px-4'>
-                <label>Total Kilos: {cosechas.kilos_totales} KG</label>
-
-                <label>Total según filtro : {cosechas.kilos_pagina} KG</label>
+                <label>Total Kilos: {kilos_totales} KG</label>
+                <Pager
+                  page={page}
+                  onPageChange={handleOnChangePage}
+                  pageRangeDisplayed={5}
+                  limit={filterLimit}
+                  totals={total_lecturas_filtro}
+                />
+                <label>Total según filtro : {kilos_filtro} KG</label>
               </div>
             </td>
           </tr>

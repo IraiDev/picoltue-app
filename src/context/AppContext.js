@@ -74,7 +74,8 @@ const AppProvider = ({ children }) => {
       console.log('cosechas: ', body)
       if (body.ok) {
          setCosechas(body)
-         getHarvestExport(data)
+         // const dataExport = { ...data, offset: 0, limite: body.total_lecturas }
+         // getHarvestExport(dataExport)
       }
       else {
          Alert({
@@ -90,28 +91,29 @@ const AppProvider = ({ children }) => {
    const getHarvestExport = async (data) => {
       const resp = await fetchToken('lecturas', data, 'POST')
       const body = await resp.json()
-      // console.log('fichas: ', body)
       if (body.ok) {
          let data = []
          data = body.lecturas.map(l => {
             return {
-               fundo: l.lectura_relacion_ig.item_negocio.desc_item_negocio,
-               cuartel: l.lectura_relacion_ig.cuartel.nombre,
-               especie: 'especie',
-               rut_cosechero: l.lectura_cosechero.rut_trabajador,
-               nombre_cosechero: l.lectura_cosechero.nombre_cosechero,
+               fundo: l.desc_item_negocio,
+               cuartel: l.desc_cuartel,
+               especie: l.desc_especie,
+               rut_cosechero: l.rut_trabajador,
+               nombre_cosechero: l.nombre_cosechero,
                cantidad: l.peso,
-               unidad: l.rh_faena.tipo_medida.desc_tipo_med,
+               unidad: l.desc_tipo_med,
                hora: moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss'),
-               equipo: 'equipo',
-               usuario: 'usuario',
-               idServ: 'is serv',
-               idLocal: 'is local'
+               equipo: l.id_dispo,
+               usuario: l.rut_supervisor,
+               idServ: l.id,
+               idLocal: l.id_local
             }
          })
-         setExcelData(data)
+         // setExcelData(data)
+         return { ok: true, data }
       }
       else {
+         return { ok: false, data: [] }
          console.log('error export excel data')
       }
    }
@@ -194,6 +196,7 @@ const AppProvider = ({ children }) => {
       // console.log('se lanzo el efecto')
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
+         console.log('se lanzo el efecto')
          validateSeesion()
          // getHarvest()
          // getSheets()
@@ -204,7 +207,7 @@ const AppProvider = ({ children }) => {
 
    return (
       <AppContext.Provider value={{
-         login, logout, user, inscripciones, cosechas, insertSheet, updateSheet, filtros, getSheets, excelData, getHarvest
+         login, logout, user, inscripciones, cosechas, insertSheet, updateSheet, filtros, getSheets, excelData, getHarvest, getHarvestExport
       }}>
          {children}
       </AppContext.Provider>
