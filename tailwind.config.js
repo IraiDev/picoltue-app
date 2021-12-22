@@ -12,7 +12,7 @@ module.exports = {
       width: {
         table: '1550px',
         table_md: '920px',
-        table_sm: '620px'
+        table_sm: '720px'
       }
     },
   },

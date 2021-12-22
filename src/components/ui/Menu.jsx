@@ -3,6 +3,8 @@ import Button from './Button'
 import OnOutsiceClick from 'react-outclick'
 import { useWindowSize } from '../../hooks/useSize'
 import ExportExcel from './ExportExcel'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import PDFResume from '../pdf/PDFResume'
 
 const Menu = () => {
    const { width } = useWindowSize()
@@ -32,24 +34,34 @@ const Menu = () => {
                >
                   <ExportExcel onClick={() => setShowMenu(!showMenu)} />
                   <hr />
-                  <Button
-                     type="iconText"
-                     className="hover:bg-gray-200 "
-                     icon="fas fa-file-pdf text-red-500"
-                     name="Resumen"
-                     block />
+                  <PDFDownloadLink
+                     className='font-semibold block text-center py-1.5 hover:bg-gray-200'
+                     document={<PDFResume />}
+                     fileName="somename.pdf"
+                  >
+                     {({ loading }) =>
+                        loading ? <div>Cargando... <i className="fas fa-file-pdf text-red-400"></i></div> :
+                           <div>Resumen <i className="fas fa-file-pdf text-red-400"></i></div>
+                     }
+
+                  </PDFDownloadLink>
                   <hr />
-                  <Button
-                     type="iconText"
-                     className="hover:bg-gray-200 "
-                     icon="fas fa-file-pdf text-red-500"
-                     name="Especifico"
-                     block />
+                  <PDFDownloadLink
+                     className='font-semibold block text-center py-1.5 hover:bg-gray-200'
+                     document={<PDFResume />}
+                     fileName="somename.pdf"
+                  >
+                     {({ loading }) =>
+                        loading ? <div>Cargando... <i className="fas fa-file-pdf text-red-400"></i></div> :
+                           <div>Especifico <i className="fas fa-file-pdf text-red-400"></i></div>
+                     }
+
+                  </PDFDownloadLink>
                </section>
 
             }
          </div>
-      </OnOutsiceClick>
+      </OnOutsiceClick >
    )
 }
 

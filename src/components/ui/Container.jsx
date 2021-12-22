@@ -31,6 +31,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                      onClick={toggleModal} />
                }
             </div>
+
             <h1 className="text-base font-semibold text-center capitalize hidden md:inline">{user.usuario.nom_user}</h1>
          </header>
          {children}

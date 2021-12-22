@@ -4,4 +4,5 @@ export const routes = {
    inscription: 'fichas',
    userManteiner: 'mantenedor-usuario',
    login: '/login',
+   pdf: 'pdf',
 }

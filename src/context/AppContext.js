@@ -17,6 +17,7 @@ const AppProvider = ({ children }) => {
    const [user, setUser] = useState(initUser)
    const [cosechas, setCosechas] = useState({})
    const [inscripciones, setInscripciones] = useState({})
+   const [usersData, setUsersData] = useState({})
    const [filtros, setFiltros] = useState({})
    const [params, setParams] = useState({})
 
@@ -42,13 +43,13 @@ const AppProvider = ({ children }) => {
       }
    }
 
-   const validateSeesion = async () => {
+   const validateSession = async () => {
       const resp = await fetchToken('auth/renew')
       const body = await resp.json()
       const { ok, usuario, token } = body
 
-      toggleLoading(true)
-      // console.log('user: ', body)
+      toggleLoading(false)
+
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
          setUser({ ok, usuario })
@@ -120,7 +121,7 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('fichas', data, 'POST')
       const body = await resp.json()
       toggleLoading(false)
-      // console.log('fichas: ', body)
+      console.log('fichas: ', body)
       if (body.ok) {
          setInscripciones(body)
       }
@@ -134,39 +135,143 @@ const AppProvider = ({ children }) => {
       }
    }
 
-   const insertSheet = async ({ payload, filters }) => {
-      const resp = await fetchToken('fichas/insert', payload, 'POST')
+   const getUsers = async (data) => {
+      const resp = await fetchToken('usuarios', data, 'POST')
       const body = await resp.json()
-      const { ok, response } = body
-      console.log('fichas insert: ', body)
-      if (ok) {
-         getSheets(filters)
+
+      toggleLoading(false)
+
+      console.log(body)
+
+      if (body.ok) {
+         setUsersData(body)
       }
       else {
+         console.log(body)
          Alert({
             title: 'Error',
-            content: response,
+            content: 'Error al obtener usuarios',
             showCancelButton: false,
             timer: 6000
          })
       }
    }
 
-   const updateSheet = async ({ payload, filters }) => {
-      const resp = await fetchToken('fichas/update', payload, 'POST')
+   const insertUser = async ({ payload, filters }) => {
+      const resp = await fetchToken('usuarios/insert', payload, 'POST')
       const body = await resp.json()
-      const { ok } = body
-      console.log('fichas update: ', body)
+
+      toggleLoading(false)
+
+      console.log(body)
+
+      if (body.ok) {
+         Alert({
+            title: 'Atencion',
+            content: 'Usuario creado con exito',
+            showCancelButton: false,
+            timer: 6000
+         })
+         getUsers(filters)
+      }
+      else {
+         Alert({
+            icon: 'error',
+            title: 'Error',
+            content: 'Error al crear usuario',
+            showCancelButton: false
+         })
+         toggleLoading(false)
+      }
+   }
+
+   const updateUser = async ({ payload, filters }) => {
+      const resp = await fetchToken('usuarios/update', payload, 'POST')
+      const body = await resp.json()
+
+      toggleLoading(false)
+
+      console.log(body)
+
+      if (body.ok) {
+         Alert({
+            title: 'Atencion',
+            content: 'Usuario actualizado con exito',
+            showCancelButton: false,
+            timer: 6000
+         })
+         getUsers(filters)
+      }
+      else {
+         Alert({
+            icon: 'error',
+            title: 'Error',
+            content: 'Error al actualizar usuario',
+            showCancelButton: false
+         })
+         toggleLoading(false)
+      }
+   }
+
+   const resetUserPassword = async ({ payload }) => {
+      const resp = await fetchToken('usuarios/reset-pass', payload, 'POST')
+      const body = await resp.json()
+
+      console.log(body)
+
+      toggleLoading(false)
+
+      if (body.ok) {
+         Alert({
+            title: 'Atencion',
+            content: 'Contraseña reseteada con exito',
+            showCancelButton: false,
+            timer: 6000
+         })
+      }
+      else {
+         Alert({
+            icon: 'error',
+            title: 'Error',
+            content: 'Error al resetear contraseña, vuelva a intentarlo, si el error persiste comuniquese con un administrador',
+            showCancelButton: false
+         })
+      }
+   }
+
+   const insertSheet = async ({ payload, filters }) => {
+      const resp = await fetchToken('fichas/insert', payload, 'POST')
+      const body = await resp.json()
+      const { ok, response } = body
+
       if (ok) {
          getSheets(filters)
       }
       else {
          Alert({
             title: 'Error',
-            content: 'Error al actualizar la ficha de inscripcion, por favor vuelva a intentarlo, si el error persiste comuniquee con un administrador',
-            showCancelButton: false,
-            timer: 6000
+            content: response ? response : 'Error al crear ficha de inscripcion',
+            showCancelButton: false
          })
+         toggleLoading(false)
+      }
+   }
+
+   const updateSheet = async ({ payload, filters }) => {
+      const resp = await fetchToken('fichas/update', payload, 'POST')
+      const body = await resp.json()
+      const { ok, reponse } = body
+
+      if (ok) {
+         getSheets(filters)
+      }
+      else {
+         Alert({
+            title: 'Error',
+            content: reponse ? reponse : 'Error al actualizar ficha',
+            showCancelButton: false
+         })
+         toggleLoading(false)
       }
    }
 
@@ -191,19 +296,32 @@ const AppProvider = ({ children }) => {
    }
 
    useEffect(() => {
-      console.log('se lanzo el efecto')
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
-         validateSeesion()
          getFilters()
-         toggleLoading(false)
       }
       // eslint-disable-next-line
-   }, [])
+   }, [user])
 
    return (
       <AppContext.Provider value={{
-         login, logout, user, inscripciones, cosechas, insertSheet, updateSheet, filtros, getSheets, getHarvest, getHarvestExport
+         login,
+         logout,
+         user,
+         inscripciones,
+         cosechas,
+         insertSheet,
+         updateSheet,
+         filtros,
+         getSheets,
+         getHarvest,
+         getHarvestExport,
+         getUsers,
+         usersData,
+         updateUser,
+         insertUser,
+         resetUserPassword,
+         validateSession
       }}>
          {children}
       </AppContext.Provider>

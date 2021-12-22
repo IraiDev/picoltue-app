@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'
@@ -16,26 +16,68 @@ import { checkForms } from '../../helpers/helpers'
 import { useToggle } from '../../hooks/useToggle'
 import TFooter from '../table/TFooter'
 import Pager from '../ui/Pager'
+import { AppContext } from '../../context/AppContext'
+import { useForm } from '../../hooks/useForm'
+import NumberFormat from 'react-number-format'
+import { UiContext } from '../../context/UiContext'
 
-const options = [{ id: 10, name: 'option 1' }, { id: 2, name: 'option 2' }, { id: 3, name: 'option 3' }]
-
-const arr = [
-   1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
+const limite = [
+   { value: 5, label: '5' },
+   { value: 10, label: '10' },
+   { value: 25, label: '25' },
+   { value: 50, label: '50' },
+   { value: 100, label: '100' }
 ]
 
 const initForm = {
    rut: '',
    name: '',
    email: '',
-   login: ''
+   login: '',
+   id: null
 }
 
 const UserManteiner = () => {
-   const [state, setstate] = useState(2)
+
+   const { getUsers, usersData, insertUser, updateUser, resetUserPassword } = useContext(AppContext)
+   const { toggleLoading } = useContext(UiContext)
    const [showModal, toggleModal] = useToggle(false)
-   const [isUpdate, setIsUpdate] = useState(false)
+   const [page, setPage] = useState(1)
+   const [offSet, setOffSet] = useState(0)
    const [values, setValues] = useState(initForm)
-   const { rut, name, email, login } = values
+   const [resetFilters, onReset] = useToggle(false)
+   const [{
+      filterRut,
+      filterName,
+      filterLogin,
+      filterLimit,
+      filterEmail
+   }, onChangeValues, reset] = useForm({
+      filterRut: '',
+      filterName: '',
+      filterLogin: '',
+      filterLimit: 5,
+      filterEmail: ''
+   })
+
+   // destructuring
+   const { rut, name, email, login, id } = values
+   // destructuring
+
+   const handleOnChangePage = (e, value) => {
+      let offset = ((value - 1) * Number(filterLimit)) % usersData.total_filtro
+      setOffSet(offset)
+      setPage(value)
+      getUsers({
+         offset,
+         limit: Number(filterLimit),
+         rut_user: filterRut,
+         nom_user: filterName,
+         login_user: filterLogin,
+         correo_user: filterEmail,
+      })
+      toggleLoading(true)
+   }
 
    const handleCloseModal = () => {
       toggleModal()
@@ -118,6 +160,26 @@ const UserManteiner = () => {
          })
          return
       }
+
+      const payload = {
+         // id_user: '', // no se usa ?
+         rut_user: rut,
+         nom_user: name,
+         login_user: login,
+         correo_user: email,
+      }
+
+      const filters = {
+         offset: offSet,
+         limit: Number(filterLimit),
+         rut_user: filterRut,
+         nom_user: filterName,
+         login_user: filterLogin,
+         correo_user: filterEmail,
+      }
+
+      insertUser({ payload, filters })
+      handleCloseModal()
    }
 
    const handleUpdateUser = () => {
@@ -196,54 +258,191 @@ const UserManteiner = () => {
          })
          return
       }
+
+      const payload = {
+         id_user: id,
+         rut_user: prettifyRut(rut),
+         nom_user: name,
+         login_user: login,
+         correo_user: email,
+      }
+
+      const filters = {
+         offset: offSet,
+         limit: Number(filterLimit),
+         rut_user: filterRut,
+         nom_user: filterName,
+         login_user: filterLogin,
+         correo_user: filterEmail,
+      }
+
+      updateUser({ payload, filters })
+      handleCloseModal()
    }
+
+   const handleResetPass = (id) => {
+      const payload = { id_user: id }
+      resetUserPassword({ payload })
+      handleCloseModal()
+   }
+
+   const onSearch = (e) => {
+      e.preventDefault()
+      getUsers({
+         offset: 0,
+         limit: Number(filterLimit),
+         rut_user: filterRut,
+         nom_user: filterName,
+         login_user: filterLogin,
+         correo_user: filterEmail,
+      })
+      toggleLoading(true)
+   }
+
+   const handleReset = () => {
+      reset()
+      onReset()
+   }
+
+   const openUpdateModal = (id) => {
+      const u = usersData.usuarios.find(user => user.id_user === id)
+      const { rut_user, nom_user, login_user, correo_user } = u
+      setValues({
+         rut: rut_user,
+         name: nom_user,
+         email: correo_user,
+         login: login_user,
+         id,
+      })
+      toggleModal()
+   }
+
+   useEffect(() => {
+      toggleLoading(true)
+      setPage(1)
+      getUsers({
+         offset: 0,
+         limit: Number(filterLimit),
+         rut_user: filterRut,
+         nom_user: filterName,
+         login_user: filterLogin,
+         correo_user: filterEmail,
+      })
+      // eslint-disable-next-line
+   }, [filterLimit, resetFilters])
 
    return (
       <>
          <Container
             title="Usuarios del sistema"
-            user="Ignacio arriagada"
-            toggleModal={() => {
-               setIsUpdate(false)
-               toggleModal()
-            }}
+            toggleModal={toggleModal}
          >
-            <Table width='w-table_sm'>
+            <Table width='w-table_md'>
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
-                     <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-                     <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-                     <Th><Select options={options} value={state} onChange={e => setstate(e.target.value)} /></Th>
-                     <Th></Th>
+                     <Th>
+                        <button
+                           className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none'
+                           onClick={handleReset} >
+                           reestablecer
+                        </button>
+                     </Th>
+                     <Th>
+                        <form onSubmit={onSearch}>
+                           <input
+                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              type="text"
+                              name="filterRut"
+                              value={filterRut}
+                              placeholder='Rut...'
+                              onChange={onChangeValues} />
+                           <button className='hidden' type='submit'></button>
+                        </form>
+                     </Th>
+                     <Th>
+                        <form onSubmit={onSearch}>
+                           <input
+                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              type="text"
+                              name="filterName"
+                              value={filterName}
+                              placeholder='Nombre...'
+                              onChange={onChangeValues} />
+                           <button className='hidden' type='submit'></button>
+                        </form>
+                     </Th>
+                     <Th>
+                        <form onSubmit={onSearch}>
+                           <input
+                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              type="text"
+                              name="filterLogin"
+                              value={filterLogin}
+                              placeholder='Login...'
+                              onChange={onChangeValues} />
+                           <button className='hidden' type='submit'></button>
+                        </form>
+                     </Th>
+                     <Th>
+                        <form onSubmit={onSearch}>
+                           <input
+                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              type="text"
+                              name="filterEmail"
+                              value={filterEmail}
+                              placeholder='Correo...'
+                              onChange={onChangeValues} />
+                           <button className='hidden' type='submit'></button>
+                        </form>
+                     </Th>
+                     <Th><Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} /></Th>
                   </tr>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
+                     <Th>#</Th>
                      <Th>RUT</Th>
                      <Th>Nombre</Th>
                      <Th>login</Th>
+                     <Th>Correo</Th>
                      <Th>acciones</Th>
                   </tr>
                </THead>
                <TBody>
                   {
-                     arr.map((option, index) => (
-                        <tr key={index} className="text-gray-700 text-sm border-b">
-                           <Td borderLeft={false}>RUT</Td>
-                           <Td>Nombre</Td>
-                           <Td>Login</Td>
+                     Object.keys(usersData).length > 0 &&
+                     usersData.usuarios.map((us, i) => (
+                        <tr
+                           key={us.id_user}
+                           className="text-gray-700 text-sm border-b"
+                        >
+                           <Td borderLeft={false}>
+                              <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md">
+                                 {i + 1}
+                              </span>
+                           </Td>
+                           <Td>
+                              {us.rut_user}
+                           </Td>
+                           <Td>
+                              {us.nom_user}
+                           </Td>
+                           <Td>
+                              {us.login_user}
+                           </Td>
+                           <Td>
+                              {us.correo_user}
+                           </Td>
                            <Td>
                               <div className="flex items-center justify-center">
                                  <Button
                                     className="text-blue-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
                                     icon="fas fa-pen"
-                                    onClick={() => {
-                                       setIsUpdate(true)
-                                       toggleModal()
-                                    }} />
+                                    onClick={() => openUpdateModal(us.id_user)} />
                                  <Button
                                     className="text-green-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
-                                    icon="fas fa-undo" />
+                                    icon="fas fa-undo"
+                                    onClick={() => handleResetPass(us.id_user)} />
                               </div>
                            </Td>
                         </tr>
@@ -252,15 +451,33 @@ const UserManteiner = () => {
                </TBody>
                <TFooter>
                   <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
-                     <td colSpan={14} className='p-2 w-full'>
+                     <td colSpan={8} className='p-2 w-full'>
                         <div className='flex justify-around items-center px-4'>
-                           <label>Total inscripciones: {4}</label>
+                           <label>Total inscripciones:
+                              <NumberFormat
+                                 className='ml-1'
+                                 value={usersData.total_global}
+                                 displayType={'text'}
+                                 decimalSeparator=','
+                                 thousandSeparator='.'
+                              />
+                           </label>
                            <Pager
-                              // onPageChange={handlePageClick}
+                              page={page}
+                              onPageChange={handleOnChangePage}
                               pageRangeDisplayed={5}
-                           // pageCount={pageCount}
+                              limit={filterLimit}
+                              totals={usersData.total_filtro}
                            />
-                           <label>Total según filtro : {4}</label>
+                           <label>Total según filtro :
+                              <NumberFormat
+                                 className='ml-1'
+                                 value={usersData.total_filtro}
+                                 displayType={'text'}
+                                 decimalSeparator=','
+                                 thousandSeparator='.'
+                              />
+                           </label>
                         </div>
                      </td>
                   </tr>
@@ -273,7 +490,7 @@ const UserManteiner = () => {
             <section className="grid gap-4">
                <h1 className="uppercase font-semibold text-lg">
                   {
-                     isUpdate ? 'modificar usuario' : 'Nuevo usuario'
+                     id ? 'modificar usuario' : 'Nuevo usuario'
                   }
                </h1>
                <HrLabel name="datos usuario" />
@@ -323,9 +540,9 @@ const UserManteiner = () => {
                />
                <Button
                   className="rounded-full md:w-max w-full order-first md:order-last place-self-end bg-green-400 hover:bg-green-500 text-white"
-                  name="Guardar"
+                  name={id ? 'modificar' : 'guardar'}
                   shadow
-                  onClick={isUpdate ? handleUpdateUser : handleNewUser}
+                  onClick={id ? handleUpdateUser : handleNewUser}
                />
             </footer>
          </Modal>

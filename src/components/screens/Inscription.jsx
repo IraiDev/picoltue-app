@@ -38,7 +38,8 @@ const initForm = {
    secondLastName: '',
    date: '',
    city: '',
-   country: ''
+   country: '',
+   id: null
 }
 
 const Inscription = () => {
@@ -47,13 +48,12 @@ const Inscription = () => {
    const { toggleLoading } = useContext(UiContext)
 
    const [showModal, toggleModal] = useToggle(false)
-   const [sheet, setSheet] = useState(null)
    const [values, setValues] = useState(initForm)
    const [page, setPage] = useState(1)
    const [offSet, setOffSet] = useState(0)
-
+   const [resetFilters, onReset] = useToggle(false)
    // destructuring
-   const { rut, firstName, secondName, lastName, secondLastName, date, city, country } = values
+   const { rut, firstName, secondName, lastName, secondLastName, date, city, country, id } = values
    const { ciudades, comunas } = filtros
    // destructuring
 
@@ -69,11 +69,12 @@ const Inscription = () => {
 
    const handleCloseModal = () => {
       toggleModal()
-      setSheet(null)
       setValues(initForm)
    }
 
    const handleNewInscription = () => {
+      const fieldValidations = rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === ''
+      const selectValidation = country === '' || city === ''
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
       const { state: fs, char: fc, list: fl } = checkForms(firstName)
@@ -141,12 +142,17 @@ const Inscription = () => {
          return
       }
 
-      if (rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === '') {
+      if (selectValidation || fieldValidations) {
          Alert({
             title: 'Atencion',
-            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
-            showCancelButton: false,
-            timer: 6000
+            icon: 'warn',
+            content: `
+            <p class="block">Todos los campos son obligatorios, por favor llene todos los campos.</p>
+             <strong class="mt-4 block">
+               Nombre, segundo nombre, apellido paterno, apellido materno, 
+               rut, fecha de nacimiento, ciudad y comuna.
+             </strong>`,
+            showCancelButton: false
          })
          return
       }
@@ -170,6 +176,7 @@ const Inscription = () => {
          apellido_m: secondLastName,
          ciudad: city,
          comuna: country,
+         fecha_ncto: date,
       }
 
       const filters = {
@@ -184,13 +191,12 @@ const Inscription = () => {
       toggleLoading(true)
       insertSheet({ payload, filters })
       toggleModal()
-      setSheet(null)
       setValues(initForm)
-
-      console.log('insert data', payload)
    }
 
    const handleUpdateInscription = () => {
+      const fieldValidations = rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === ''
+      const selectValidation = country === '' || city === ''
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
       const { state: fs, char: fc, list: fl } = checkForms(firstName)
@@ -258,12 +264,17 @@ const Inscription = () => {
          return
       }
 
-      if (rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === '') {
+      if (selectValidation || fieldValidations) {
          Alert({
             title: 'Atencion',
-            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
-            showCancelButton: false,
-            timer: 6000
+            icon: 'warn',
+            content: `
+            <p class="block">Todos los campos son obligatorios, por favor llene todos los campos.</p>
+             <strong class="mt-4 block">
+               Nombre, segundo nombre, apellido paterno, apellido materno, 
+               rut, fecha de nacimiento, ciudad y comuna.
+             </strong>`,
+            showCancelButton: false
          })
          return
       }
@@ -280,14 +291,15 @@ const Inscription = () => {
       }
 
       const payload = {
-         id_ficha: sheet.id_ficha_inscripcion,
-         rut,
+         id_ficha: id,
+         rut: prettifyRut(rut),
          nombre: firstName,
          segundo_nombre: secondName,
          apellido_p: lastName,
          apellido_m: secondLastName,
          ciudad: city,
          comuna: country,
+         fecha_ncto: date,
       }
 
       const filters = {
@@ -302,10 +314,7 @@ const Inscription = () => {
       toggleLoading(true)
       updateSheet({ payload, filters })
       toggleModal()
-      setSheet(null)
       setValues(initForm)
-
-      console.log('update data', payload)
    }
 
    const updateAction = (id) => {
@@ -321,15 +330,12 @@ const Inscription = () => {
          id_comuna
       } = i
 
-      console.log(id_comuna)
       let co = { value: '' }, ci = { value: '' }
 
       if (id_comuna || id_ciudad) {
          co = comunas.find(c => Number(c.value) === id_comuna)
          ci = ciudades.find(c => Number(c.value) === id_ciudad)
       }
-
-      setSheet(i)
       setValues({
          rut: rut_trabajador,
          firstName: nombre,
@@ -338,7 +344,8 @@ const Inscription = () => {
          secondLastName: apellido_materno,
          date: moment(new Date(fecha_nacto)).format('yyyy-MM-DD'),
          city: ci.value,
-         country: co.value
+         country: co.value,
+         id
       })
 
       toggleModal()
@@ -374,15 +381,7 @@ const Inscription = () => {
 
    const handleReset = () => {
       reset()
-      toggleLoading(true)
-      getSheets({
-         offset: 0,
-         limite: Number(filterLimit),
-         rut_trabajador: filterRut,
-         nombre_trabajador: filterName,
-         comuna: Number(filterCountry),
-         ciudad: Number(filterCity),
-      })
+      onReset()
    }
 
    useEffect(() => {
@@ -398,7 +397,7 @@ const Inscription = () => {
       })
 
       // eslint-disable-next-line
-   }, [filterCity, filterCountry, filterLimit])
+   }, [filterCity, filterCountry, filterLimit, resetFilters])
 
    return (
       <>
@@ -408,7 +407,7 @@ const Inscription = () => {
             <Table width='w-table_md'>
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
-                     <th colSpan={2}>
+                     <th className='px-3' colSpan={2}>
                         <button
                            className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none'
                            onClick={handleReset} >
@@ -422,7 +421,7 @@ const Inscription = () => {
                               type="text"
                               name="filterRut"
                               value={filterRut}
-                              placeholder='Escriba el rut..'
+                              placeholder='Rut...'
                               onChange={onChangeValues} />
                            <button className='hidden' type='submit'></button>
                         </form>
@@ -434,7 +433,7 @@ const Inscription = () => {
                               type="text"
                               name="filterName"
                               value={filterName}
-                              placeholder='Escriba el nombre...'
+                              placeholder='Nombre...'
                               onChange={onChangeValues} />
                            <button className='hidden' type='submit'></button>
                         </form>
@@ -532,12 +531,12 @@ const Inscription = () => {
          <Modal showModal={showModal} onClose={handleCloseModal}>
             <header className='flex justify-between items-center mt-2 mb-5'>
                <h1 className="uppercase font-semibold text-lg">
-                  {sheet ? 'MOdificar FICHA DE INSCRIPCION' : 'NUEVA FICHA DE INSCRIPCION'}
+                  {id ? 'MOdificar FICHA DE INSCRIPCION' : 'NUEVA FICHA DE INSCRIPCION'}
                </h1>
                {
-                  sheet &&
+                  id &&
                   <h5 className='capitalize bg-gray-100 rounded-full py-1 px-2 font-semibold text-gray-500'>
-                     ID ficha: {sheet.id_ficha_inscripcion}
+                     ID ficha: {id}
                   </h5>
                }
             </header>
@@ -613,7 +612,7 @@ const Inscription = () => {
                         })} />
                   </section>
                   <section className='flex items-center gap-2'>
-                     <label className='px-2'>Comuna:</label>
+                     <label className='px-2'>Ciudad:</label>
                      <Select
                         className='w-full p-2 bg-gray-100 rounded-md'
                         options={cityForm}
@@ -698,9 +697,9 @@ const Inscription = () => {
                />
                <Button
                   className="rounded-full md:w-max w-full order-first md:order-last place-self-end bg-green-400 hover:bg-green-500 text-white"
-                  name={sheet ? 'modificar' : 'guardar'}
+                  name={id ? 'modificar' : 'guardar'}
                   shadow
-                  onClick={sheet ? handleUpdateInscription : handleNewInscription}
+                  onClick={id ? handleUpdateInscription : handleNewInscription}
                />
             </footer>
          </Modal>
