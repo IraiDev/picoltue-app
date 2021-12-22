@@ -17,6 +17,7 @@ import Modal from '../ui/Modal'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import { Alert } from '../../helpers/alerts'
+import NumberFormat from 'react-number-format'
 
 const limite = [
   { value: 10, label: '10' },
@@ -281,7 +282,15 @@ const Harvest = () => {
                   <Td children={l.desc_especie} />
                   <Td children={l.rut_trabajador} />
                   <Td children={l.nombre_cosechero} />
-                  <Td align='text-right' children={l.peso} />
+                  <Td align='text-right'>
+                    <NumberFormat
+                      className='text-blue-400 ml-1 font-semibold'
+                      value={l.peso}
+                      displayType={'text'}
+                      decimalSeparator=','
+                      thousandSeparator='.'
+                    />
+                  </Td>
                   <Td align='text-left' children={l.desc_tipo_med} />
                   <Td children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
                   <Td children={l.id_dispo} />
@@ -299,11 +308,25 @@ const Harvest = () => {
                   <section className='text-left'>
                     <label className='block mb-1'>
                       Total según filtro:
-                      <span className='text-blue-400'> {kilos_filtro} KG</span>
+                      <NumberFormat
+                        className='text-blue-400 ml-1'
+                        value={kilos_filtro}
+                        displayType={'text'}
+                        suffix='KG'
+                        decimalSeparator=','
+                        thousandSeparator='.'
+                      />
                     </label>
                     <label className='block'>
                       Total Kilos:
-                      <span className='text-blue-400'> {kilos_totales} KG</span>
+                      <NumberFormat
+                        className='text-blue-400 ml-1'
+                        value={kilos_totales}
+                        displayType={'text'}
+                        suffix='KG'
+                        decimalSeparator=','
+                        thousandSeparator='.'
+                      />
                     </label>
                   </section>
                   <Pager
@@ -313,7 +336,15 @@ const Harvest = () => {
                     limit={filterLimit}
                     totals={total_lecturas_filtro}
                   />
-                  <label>lecturas según filtro: {total_lecturas_filtro}</label>
+                  <label>lecturas según filtro:
+                    <NumberFormat
+                      className='ml-1'
+                      value={total_lecturas_filtro}
+                      displayType={'text'}
+                      decimalSeparator=','
+                      thousandSeparator='.'
+                    />
+                  </label>
                 </div>
               </td>
             </tr>

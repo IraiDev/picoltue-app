@@ -21,6 +21,7 @@ import { AppContext } from '../../context/AppContext'
 import TFooter from '../table/TFooter'
 import { useDependSelect } from '../../hooks/useDependSelect'
 import { UiContext } from '../../context/UiContext'
+import NumberFormat from 'react-number-format'
 
 const limite = [
    { value: 10, label: '10' },
@@ -496,7 +497,15 @@ const Inscription = () => {
                   <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
                      <td colSpan={8} className='p-2 w-full'>
                         <div className='flex justify-around items-center px-4'>
-                           <label>Total inscripciones: {inscripciones.fichas_totales}</label>
+                           <label>Total inscripciones:
+                              <NumberFormat
+                                 className='ml-1'
+                                 value={inscripciones.fichas_totales}
+                                 displayType={'text'}
+                                 decimalSeparator=','
+                                 thousandSeparator='.'
+                              />
+                           </label>
                            <Pager
                               page={page}
                               onPageChange={handleOnChangePage}
@@ -504,7 +513,15 @@ const Inscription = () => {
                               limit={filterLimit}
                               totals={inscripciones.fichas_pagina}
                            />
-                           <label>Total según filtro : {inscripciones.fichas_pagina}</label>
+                           <label>Total según filtro :
+                              <NumberFormat
+                                 className='ml-1'
+                                 value={inscripciones.fichas_pagina}
+                                 displayType={'text'}
+                                 decimalSeparator=','
+                                 thousandSeparator='.'
+                              />
+                           </label>
                         </div>
                      </td>
                   </tr>
