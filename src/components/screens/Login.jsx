@@ -16,7 +16,7 @@ export const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    toggleLoading()
+    toggleLoading(true)
     await login({ user_name: user, user_pass: pass })
     navigate('/')
     reset()

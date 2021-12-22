@@ -11,6 +11,7 @@ import { useForm } from '../../hooks/useForm'
 import { AppContext } from '../../context/AppContext'
 import moment from 'moment'
 import TFooter from '../table/TFooter'
+import { UiContext } from '../../context/UiContext'
 
 const limite = [
   { value: 10, label: '10' },
@@ -20,6 +21,8 @@ const limite = [
 ]
 
 const Harvest = () => {
+
+  const { toggleLoading } = useContext(UiContext)
   const { cosechas, filtros, getHarvest } = useContext(AppContext)
   const [offSet, setOffSet] = useState(0)
   const [page, setPage] = useState(1)
@@ -32,7 +35,7 @@ const Harvest = () => {
     filterFound,
     filterCuartel,
     filterSpecies
-  }, onChangeValues] = useForm({
+  }, onChangeValues, reset] = useForm({
     filterRut: '',
     filterName: '',
     filterUser: '',
@@ -45,10 +48,11 @@ const Harvest = () => {
 
   // destructuring
   const { especies, cuarteles, fundos } = filtros
-  const { lecturas, kilos_filtro, kilos_totales, total_lecturas, total_lecturas_filtro } = cosechas
+  const { lecturas, kilos_filtro, kilos_totales, total_lecturas_filtro } = cosechas
   // destructuring
 
   const handleOnChangePage = (e, value) => {
+    toggleLoading(true)
     let offset = ((value - 1) * filterLimit) % total_lecturas_filtro
     setOffSet(offset)
     setPage(value)
@@ -69,6 +73,7 @@ const Harvest = () => {
 
   const onSearch = (e) => {
     e.preventDefault()
+    toggleLoading(true)
     getHarvest({
       especie: Number(filterSpecies),
       fundo: Number(filterFound),
@@ -84,7 +89,26 @@ const Harvest = () => {
     })
   }
 
+  const handleReset = () => {
+    reset()
+    toggleLoading(true)
+    getHarvest({
+      especie: Number(filterSpecies),
+      fundo: Number(filterFound),
+      cuartel: Number(filterCuartel),
+      rut_cosechero: filterRut,
+      cantidad: Number(filterKg),
+      fecha_desde: '',
+      fecha_hasta: '',
+      usuario: filterUser,
+      nombre_cosechero: filterName,
+      offset: 0,
+      limite: Number(filterLimit)
+    })
+  }
+
   useEffect(() => {
+    toggleLoading(true)
     setPage(1)
     getHarvest({
       especie: Number(filterSpecies),
@@ -99,6 +123,8 @@ const Harvest = () => {
       offset: 0,
       limite: Number(filterLimit)
     })
+
+    // eslint-disable-next-line
   }, [filterFound, filterCuartel, filterSpecies, filterLimit])
 
   return (
@@ -110,7 +136,7 @@ const Harvest = () => {
           <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200">
             <Th><button
               className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-400 hover:bg-blue-500 transition duration-500 focus:outline-none'
-            //  onClick={() => setValues(initForm)} 
+              onClick={handleReset}
             >
               reestablecer
             </button></Th>

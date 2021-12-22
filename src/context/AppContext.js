@@ -18,14 +18,14 @@ const AppProvider = ({ children }) => {
    const [cosechas, setCosechas] = useState({})
    const [inscripciones, setInscripciones] = useState({})
    const [filtros, setFiltros] = useState({})
-   const [excelData, setExcelData] = useState([])
+   const [params, setParams] = useState({})
 
    const login = async (data) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
       const body = await resp.json()
       const { ok, usuario, token, msg } = body
 
-      toggleLoading()
+      toggleLoading(false)
 
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
@@ -47,7 +47,7 @@ const AppProvider = ({ children }) => {
       const body = await resp.json()
       const { ok, usuario, token } = body
 
-      toggleLoading()
+      toggleLoading(true)
       // console.log('user: ', body)
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
@@ -71,11 +71,11 @@ const AppProvider = ({ children }) => {
    const getHarvest = async (data = {}) => {
       const resp = await fetchToken('lecturas', data, 'POST')
       const body = await resp.json()
-      console.log('cosechas: ', body)
+      toggleLoading(false)
+      // console.log('cosechas: ', body)
       if (body.ok) {
+         setParams({ ...data, offset: 0, limite: body.total_lecturas })
          setCosechas(body)
-         // const dataExport = { ...data, offset: 0, limite: body.total_lecturas }
-         // getHarvestExport(dataExport)
       }
       else {
          Alert({
@@ -87,9 +87,9 @@ const AppProvider = ({ children }) => {
       }
    }
 
+   const getHarvestExport = async () => {
 
-   const getHarvestExport = async (data) => {
-      const resp = await fetchToken('lecturas', data, 'POST')
+      const resp = await fetchToken('lecturas', params, 'POST')
       const body = await resp.json()
       if (body.ok) {
          let data = []
@@ -109,19 +109,18 @@ const AppProvider = ({ children }) => {
                idLocal: l.id_local
             }
          })
-         // setExcelData(data)
          return { ok: true, data }
       }
       else {
-         return { ok: false, data: [] }
          console.log('error export excel data')
+         return { ok: false, data: [] }
       }
    }
 
    const getSheets = async (data) => {
       const resp = await fetchToken('fichas', data, 'POST')
       const body = await resp.json()
-      toggleLoading()
+      toggleLoading(false)
       // console.log('fichas: ', body)
       if (body.ok) {
          setInscripciones(body)
@@ -193,21 +192,19 @@ const AppProvider = ({ children }) => {
    }
 
    useEffect(() => {
-      // console.log('se lanzo el efecto')
+      console.log('se lanzo el efecto')
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
-         console.log('se lanzo el efecto')
          validateSeesion()
-         // getHarvest()
-         // getSheets()
          getFilters()
-         toggleLoading()
+         toggleLoading(false)
       }
+      // eslint-disable-next-line
    }, [])
 
    return (
       <AppContext.Provider value={{
-         login, logout, user, inscripciones, cosechas, insertSheet, updateSheet, filtros, getSheets, excelData, getHarvest, getHarvestExport
+         login, logout, user, inscripciones, cosechas, insertSheet, updateSheet, filtros, getSheets, getHarvest, getHarvestExport
       }}>
          {children}
       </AppContext.Provider>

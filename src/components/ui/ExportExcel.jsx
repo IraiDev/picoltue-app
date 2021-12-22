@@ -1,19 +1,44 @@
+import { useContext, useRef, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel'
+import { AppContext } from '../../context/AppContext'
+import { UiContext } from '../../context/UiContext'
+import Button from './Button'
 
-const ExportExcel = ({ data = [], onClick }) => {
+const ExportExcel = ({ onClick }) => {
+
+   const { getHarvestExport } = useContext(AppContext)
+   const { toggleLoading } = useContext(UiContext)
+   const [data, setData] = useState([])
+   const ref = useRef()
+
+   const handleGetData = async () => {
+      toggleLoading(true)
+      const data = await getHarvestExport()
+      setData(data.data)
+      toggleLoading(false)
+      ref.current.handleDownload()
+   }
 
    return (
       <>
-         <div disabled onClick={onClick}>
+         <Button
+            className='hover:bg-gray-200 block w-full'
+            type='iconText'
+            name='excel'
+            icon='fas fa-file-excel text-green-500'
+            onClick={handleGetData}
+         />
+
+         <div onClick={onClick}>
             <ReactHTMLTableToExcel
+               ref={ref}
                id="test-table-xls-button"
-               className="w-full relative p-1.5 border-2 border-transparent hover:border-green-400 z-20 transition duration-300"
+               className="hidden"
                table="table1"
                filename="lectutas cosecha"
                sheet="lecturas"
                buttonText="Excel"
             ></ReactHTMLTableToExcel>
-            <i className="fas fa-file-excel text-green-500 absolute right-20 top-3 z-10"></i>
          </div>
 
          <table className='hidden' id="table1" border='1'>
@@ -49,7 +74,7 @@ const ExportExcel = ({ data = [], onClick }) => {
                         <td>{d.fundo}</td>
                         <td>{d.cuartel}</td>
                         <td>{d.especie}</td>
-                        <td>{d.rut_coseshero}</td>
+                        <td>{d.rut_cosechero}</td>
                         <td>{d.nombre_cosechero}</td>
                         <td align='right'>{d.cantidad}</td>
                         <td align='left'>{d.unidad}</td>

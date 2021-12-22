@@ -6,6 +6,9 @@ import { UiContext } from '../context/UiContext'
 import { DashRoutes } from './DashRoutes'
 import PrivateRoutes from './PrivateRoutes'
 import PublicRoutes from './PublicRoutes'
+import { routes } from '../types/types'
+
+const { login } = routes
 
 const AppRoutes = () => {
   const { ShowLoading } = useContext(UiContext)
@@ -14,7 +17,7 @@ const AppRoutes = () => {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={
+          <Route path={login} element={
             <PublicRoutes>
               <Login />
             </PublicRoutes>

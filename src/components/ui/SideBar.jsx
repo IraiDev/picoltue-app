@@ -5,6 +5,9 @@ import Button from './Button'
 import LiNav from './LiNav'
 import logo from '../../assets/img/logo25x25.png'
 import { AppContext } from '../../context/AppContext'
+import { routes } from '../../types/types'
+
+const { harvest, inscription, userManteiner, login } = routes
 
 const SideBar = () => {
   const { showSidebar, toggleSidebar } = useContext(UiContext)
@@ -13,7 +16,7 @@ const SideBar = () => {
 
   const handleLogout = () => {
     logout()
-    navigate('/login', { replace: true })
+    navigate(login, { replace: true })
   }
 
   return (
@@ -37,19 +40,19 @@ const SideBar = () => {
       <ul className="capitalize mt-20">
         <h5 className="font-light text-gray-500 px-3">Menu</h5>
         <LiNav
-          to="/cosechas"
+          to={harvest}
           name="lectura de cosechas"
           icon="fas fa-warehouse"
           onClick={toggleSidebar}
         />
         <LiNav
-          to="/personal"
+          to={inscription}
           name="ficha de inscripcion"
           icon="far fa-address-book"
           onClick={toggleSidebar}
         />
         <LiNav
-          to="/mantenedor-usuario"
+          to={userManteiner}
           name="Mant. Usuarios"
           icon="fas fa-user-cog"
           onClick={toggleSidebar}

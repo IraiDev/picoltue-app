@@ -58,7 +58,7 @@ const Inscription = () => {
 
    const [{ filterRut, filterName, filterCountry, filterCity, filterLimit }, onChangeValues, reset] = useForm({
       filterRut: '',
-      filterName: 'ignacio',
+      filterName: '',
       filterLimit: 10,
       filterCountry: '',
       filterCity: ''
@@ -180,11 +180,11 @@ const Inscription = () => {
          ciudad: Number(filterCity),
       }
 
+      toggleLoading(true)
       insertSheet({ payload, filters })
       toggleModal()
       setSheet(null)
       setValues(initForm)
-      toggleLoading()
 
       console.log('insert data', payload)
    }
@@ -298,11 +298,11 @@ const Inscription = () => {
          ciudad: Number(filterCity),
       }
 
+      toggleLoading(true)
       updateSheet({ payload, filters })
       toggleModal()
       setSheet(null)
       setValues(initForm)
-      toggleLoading()
 
       console.log('update data', payload)
    }
@@ -355,7 +355,7 @@ const Inscription = () => {
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
       })
-      toggleLoading()
+      toggleLoading(true)
    }
 
    const onSearch = (e) => {
@@ -368,11 +368,12 @@ const Inscription = () => {
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
       })
-      toggleLoading()
+      toggleLoading(true)
    }
 
    const handleReset = () => {
       reset()
+      toggleLoading(true)
       getSheets({
          offset: 0,
          limite: Number(filterLimit),
@@ -381,13 +382,10 @@ const Inscription = () => {
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
       })
-      toggleLoading()
    }
 
    useEffect(() => {
-      console.log(filterLimit)
-      console.log(filterCountry)
-      toggleLoading()
+      toggleLoading(true)
       setPage(1)
       getSheets({
          offset: 0,
@@ -397,6 +395,8 @@ const Inscription = () => {
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
       })
+
+      // eslint-disable-next-line
    }, [filterCity, filterCountry, filterLimit])
 
    return (

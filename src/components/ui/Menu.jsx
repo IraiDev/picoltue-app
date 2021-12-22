@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Button from './Button'
 import OnOutsiceClick from 'react-outclick'
 import { useWindowSize } from '../../hooks/useSize'
-import { AppContext } from '../../context/AppContext'
 import ExportExcel from './ExportExcel'
 
 const Menu = () => {
-   const { excelData } = useContext(AppContext)
    const { width } = useWindowSize()
    const [showMenu, setShowMenu] = useState(false)
 
@@ -28,10 +26,11 @@ const Menu = () => {
             {showMenu &&
                <section
                   className={`
-               absolute top-12 right-0 z-40 w-60 bg-white shadow-2xl border rounded-md
-               animate__animated animate__fadeIn animate__faster
-               `}>
-                  <ExportExcel onClick={() => setShowMenu(!showMenu)} data />
+                  absolute top-12 right-0 z-40 w-60 bg-white shadow-2xl border rounded-md
+                  animate__animated animate__fadeIn animate__faster
+                  `}
+               >
+                  <ExportExcel onClick={() => setShowMenu(!showMenu)} />
                   <hr />
                   <Button
                      type="iconText"

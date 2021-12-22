@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'

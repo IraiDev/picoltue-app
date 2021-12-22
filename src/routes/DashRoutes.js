@@ -3,6 +3,9 @@ import Harvest from '../components/screens/Harvest'
 import Inscription from '../components/screens/Inscription'
 import UserManteiner from '../components/screens/UserManteiner'
 import SideBar from '../components/ui/SideBar'
+import { routes } from '../types/types'
+
+const { home, harvest, inscription, userManteiner } = routes
 
 export const DashRoutes = () => {
 
@@ -10,10 +13,10 @@ export const DashRoutes = () => {
     <>
       <SideBar />
       <Routes>
-        <Route path="cosechas" element={<Harvest />} />
-        <Route path="personal" element={<Inscription />} />
-        <Route path="mantenedor-usuario" element={<UserManteiner />} />
-        <Route path="/" element={<Harvest />} />
+        <Route path={harvest} element={<Harvest />} />
+        <Route path={inscription} element={<Inscription />} />
+        <Route path={userManteiner} element={<UserManteiner />} />
+        <Route path={home} element={<Harvest />} />
       </Routes>
     </>
   )
