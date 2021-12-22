@@ -72,7 +72,6 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('lecturas', data, 'POST')
       const body = await resp.json()
       toggleLoading(false)
-      // console.log('cosechas: ', body)
       if (body.ok) {
          setParams({ ...data, offset: 0, limite: body.total_lecturas })
          setCosechas(body)
