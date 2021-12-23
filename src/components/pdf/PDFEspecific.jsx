@@ -4,7 +4,7 @@ import moment from 'moment'
 
 const arr = [0, 1, 2, 3]
 
-const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
+const PDFEspecific = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
   <Document>
     <Page size="A4">
       <View
@@ -124,4 +124,4 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
   </Document>
 )
 
-export default PDFResume
+export default PDFEspecific

@@ -140,12 +140,16 @@ const UserManteiner = () => {
          return
       }
 
-      if (rut === '' || name === '' || email === '' || login === '') {
+      if (rut.trim() === '' || name.trim() === '' || email.trim() === '' || login.trim() === '') {
          Alert({
             title: 'Atencion',
-            content: 'Todos los campos son obligatorios, por favor llene todos los campos',
-            showCancelButton: false,
-            timer: 6000
+            icon: 'warn',
+            content: `
+            <p class="block">Todos los campos son obligatorios, por favor llene todos los campos.</p>
+             <strong class="mt-4 block">
+               Nombre y apellido, rut, login, correo.
+             </strong>`,
+            showCancelButton: false
          })
          return
       }
@@ -162,7 +166,6 @@ const UserManteiner = () => {
       }
 
       const payload = {
-         // id_user: '', // no se usa ?
          rut_user: rut,
          nom_user: name,
          login_user: login,
@@ -504,7 +507,7 @@ const UserManteiner = () => {
                      rut: e.target.value
                   })} />
                <Input
-                  field="Nombre completo (Nombres y Apellidos)"
+                  field="Nombre completo (Nombre y Apellido)"
                   name="name"
                   value={name}
                   onChange={e => setValues({

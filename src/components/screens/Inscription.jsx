@@ -73,7 +73,7 @@ const Inscription = () => {
    }
 
    const handleNewInscription = () => {
-      const fieldValidations = rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === ''
+      const fieldValidations = rut.trim() === '' || firstName.trim() === '' || secondName.trim() === '' || lastName.trim() === '' || secondLastName.trim() === '' || date.trim() === ''
       const selectValidation = country === '' || city === ''
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
@@ -195,7 +195,7 @@ const Inscription = () => {
    }
 
    const handleUpdateInscription = () => {
-      const fieldValidations = rut === '' || firstName === '' || secondName === '' || lastName === '' || secondLastName === '' || date === ''
+      const fieldValidations = rut.trim() === '' || firstName.trim() === '' || secondName.trim() === '' || lastName.trim() === '' || secondLastName.trim() === '' || date.trim() === ''
       const selectValidation = country === '' || city === ''
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)

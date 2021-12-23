@@ -26,6 +26,8 @@ const AppProvider = ({ children }) => {
       const body = await resp.json()
       const { ok, usuario, token, msg } = body
 
+      console.log(body)
+
       toggleLoading(false)
 
       if (ok) {
@@ -58,8 +60,7 @@ const AppProvider = ({ children }) => {
          Alert({
             title: 'Atencion',
             content: 'Su sesion ha expirado',
-            showCancelButton: false,
-            timer: 6000
+            showCancelButton: false
          })
       }
    }

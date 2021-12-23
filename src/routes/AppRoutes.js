@@ -16,7 +16,6 @@ const AppRoutes = () => {
   const { validateSession } = useContext(AppContext)
 
   useEffect(() => {
-    console.log('se lanzo el efecto')
     const token = window.localStorage.getItem('token-picoltue')
     if (token) {
       validateSession()

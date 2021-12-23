@@ -19,7 +19,6 @@ export const Login = () => {
     toggleLoading(true)
     await login({ user_name: user, user_pass: pass })
     navigate('/')
-    reset()
   }
 
   const handleRecoverPass = async () => {

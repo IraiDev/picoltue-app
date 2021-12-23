@@ -9,22 +9,19 @@ import { routes } from '../types/types'
 
 const { home, harvest, inscription, userManteiner, pdf } = routes
 
-export const DashRoutes = () => {
-
-  return (
-    <>
-      <SideBar />
-      <Routes>
-        <Route path={harvest} element={<Harvest />} />
-        <Route path={inscription} element={<Inscription />} />
-        <Route path={userManteiner} element={<UserManteiner />} />
-        <Route path={home} element={<Harvest />} />
-        <Route path={pdf} element={
-          <PDFViewer>
-            <PDFResume />
-          </PDFViewer>
-        } />
-      </Routes>
-    </>
-  )
-}
+export const DashRoutes = () => (
+  <>
+    <SideBar />
+    <Routes>
+      <Route path={harvest} element={<Harvest />} />
+      <Route path={inscription} element={<Inscription />} />
+      <Route path={userManteiner} element={<UserManteiner />} />
+      <Route path={home} element={<Harvest />} />
+      <Route path={pdf} element={
+        <PDFViewer style={{ width: '100%', height: '100vh' }}>
+          <PDFResume />
+        </PDFViewer>
+      } />
+    </Routes>
+  </>
+)
