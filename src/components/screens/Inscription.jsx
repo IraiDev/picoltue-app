@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import Td from '../table/Td'
 import Th from '../table/Th'
 import Button from '../ui/Button'
@@ -58,6 +58,8 @@ const Inscription = () => {
    const { ciudades, comunas } = filtros
    // destructuring
 
+   const rutRef = useRef(), nameRef = useRef()
+
    const [{
       filterRut,
       filterName,
@@ -73,6 +75,19 @@ const Inscription = () => {
    })
    const cityTable = useDependSelect(filterCountry, ciudades)
    const cityForm = useDependSelect(country, ciudades)
+
+   const getSheetsData = (offset, page) => {
+      toggleLoading(true)
+      setPage(page)
+      getSheets({
+         offset,
+         limite: Number(filterLimit),
+         rut_trabajador: prettifyRut(filterRut),
+         nombre_trabajador: filterName,
+         comuna: Number(filterCountry),
+         ciudad: Number(filterCity),
+      })
+   }
 
    const handleCloseModal = () => {
       toggleModal()
@@ -362,28 +377,14 @@ const Inscription = () => {
       let offset = ((value - 1) * Number(filterLimit)) % inscripciones.fichas_pagina
       setOffSet(offset)
       setPage(value)
-      getSheets({
-         offset,
-         limite: Number(filterLimit),
-         rut_trabajador: prettifyRut(filterRut),
-         nombre_trabajador: filterName,
-         comuna: Number(filterCountry),
-         ciudad: Number(filterCity),
-      })
-      toggleLoading(true)
+      getSheetsData(offset, value)
    }
 
    const onSearch = (e) => {
+      nameRef.current.blur()
+      rutRef.current.blur()
       e.preventDefault()
-      getSheets({
-         offset: 0,
-         limite: Number(filterLimit),
-         rut_trabajador: prettifyRut(filterRut),
-         nombre_trabajador: filterName,
-         comuna: Number(filterCountry),
-         ciudad: Number(filterCity),
-      })
-      toggleLoading(true)
+      getSheetsData()
    }
 
    const handleReset = () => {
@@ -392,17 +393,7 @@ const Inscription = () => {
    }
 
    useEffect(() => {
-      toggleLoading(true)
-      setPage(1)
-      getSheets({
-         offset: 0,
-         limite: Number(filterLimit),
-         rut_trabajador: prettifyRut(filterRut),
-         nombre_trabajador: filterName,
-         comuna: Number(filterCountry),
-         ciudad: Number(filterCity),
-      })
-
+      getSheetsData()
       // eslint-disable-next-line
    }, [filterCity, filterCountry, filterLimit, resetFilters])
 
@@ -424,24 +415,32 @@ const Inscription = () => {
                      <Th>
                         <form onSubmit={onSearch}>
                            <input
+                              ref={rutRef}
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterRut"
                               value={filterRut}
                               placeholder='Rut...'
-                              onChange={onChangeValues} />
+                              onChange={onChangeValues}
+                              onFocus={e => {
+                                 e.target.select()
+                              }} />
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
                      <Th>
                         <form onSubmit={onSearch}>
                            <input
+                              ref={nameRef}
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterName"
                               value={filterName}
                               placeholder='Nombre...'
-                              onChange={onChangeValues} />
+                              onChange={onChangeValues}
+                              onFocus={e => {
+                                 e.target.select()
+                              }} />
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>

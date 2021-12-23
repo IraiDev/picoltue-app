@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'
@@ -59,14 +59,15 @@ const UserManteiner = () => {
       filterEmail: ''
    })
 
+   const rutRef = useRef(), nameRef = useRef(), emailRef = useRef(), loginRef = useRef()
+
    // destructuring
    const { rut, name, email, login, id } = values
    // destructuring
 
-   const handleOnChangePage = (e, value) => {
-      let offset = ((value - 1) * Number(filterLimit)) % usersData.total_filtro
-      setOffSet(offset)
-      setPage(value)
+   const getUsersData = async (offset = 0, page = 1) => {
+      toggleLoading(true)
+      setPage(page)
       getUsers({
          offset,
          limit: Number(filterLimit),
@@ -75,7 +76,13 @@ const UserManteiner = () => {
          login_user: filterLogin,
          correo_user: filterEmail,
       })
-      toggleLoading(true)
+   }
+
+   const handleOnChangePage = (e, value) => {
+      let offset = ((value - 1) * Number(filterLimit)) % usersData.total_filtro
+      setOffSet(offset)
+      setPage(value)
+      getUsersData(offset, value)
    }
 
    const handleCloseModal = () => {
@@ -293,17 +300,12 @@ const UserManteiner = () => {
    }
 
    const onSearch = (e) => {
+      rutRef.current.blur()
+      nameRef.current.blur()
+      emailRef.current.blur()
+      loginRef.current.blur()
       e.preventDefault()
-      setPage(1)
-      getUsers({
-         offset: 0,
-         limit: Number(filterLimit),
-         rut_user: filterRut,
-         nom_user: filterName,
-         login_user: filterLogin,
-         correo_user: filterEmail,
-      })
-      toggleLoading(true)
+      getUsersData()
    }
 
    const handleReset = () => {
@@ -325,16 +327,7 @@ const UserManteiner = () => {
    }
 
    useEffect(() => {
-      toggleLoading(true)
-      setPage(1)
-      getUsers({
-         offset: 0,
-         limit: Number(filterLimit),
-         rut_user: filterRut,
-         nom_user: filterName,
-         login_user: filterLogin,
-         correo_user: filterEmail,
-      })
+      getUsersData()
       // eslint-disable-next-line
    }, [filterLimit, resetFilters])
 
@@ -357,48 +350,64 @@ const UserManteiner = () => {
                      <Th>
                         <form onSubmit={onSearch}>
                            <input
+                              ref={rutRef}
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterRut"
-                              value={filterRut}
+                              value={prettifyRut(filterRut)}
                               placeholder='Rut...'
-                              onChange={onChangeValues} />
+                              onChange={onChangeValues}
+                              onFocus={e => {
+                                 e.target.select()
+                              }} />
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
                      <Th>
                         <form onSubmit={onSearch}>
                            <input
+                              ref={nameRef}
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterName"
                               value={filterName}
                               placeholder='Nombre...'
-                              onChange={onChangeValues} />
+                              onChange={onChangeValues}
+                              onFocus={e => {
+                                 e.target.select()
+                              }} />
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
                      <Th>
                         <form onSubmit={onSearch}>
                            <input
+                              ref={loginRef}
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterLogin"
                               value={filterLogin}
                               placeholder='Login...'
-                              onChange={onChangeValues} />
+                              onChange={onChangeValues}
+                              onFocus={e => {
+                                 e.target.select()
+                              }} />
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
                      <Th>
                         <form onSubmit={onSearch}>
                            <input
+                              ref={emailRef}
                               className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterEmail"
                               value={filterEmail}
                               placeholder='Correo...'
-                              onChange={onChangeValues} />
+                              onChange={onChangeValues}
+                              onFocus={e => {
+                                 e.target.select()
+                              }} />
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
