@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import Table from '../table/Table'
 import TBody from '../table/TBody'
 import Td from '../table/Td'
@@ -18,6 +18,7 @@ import Input from '../ui/Input'
 import Button from '../ui/Button'
 import { Alert } from '../../helpers/alerts'
 import NumberFormat from 'react-number-format'
+import { prettifyRut } from 'react-rut-formatter'
 
 const limite = [
   { value: 10, label: '10' },
@@ -33,7 +34,6 @@ const Harvest = () => {
   const { toggleLoading } = useContext(UiContext)
   const { cosechas, filtros, getHarvest } = useContext(AppContext)
   const [showDateModal, toggleDateModal] = useToggle(false)
-  const [offSet, setOffSet] = useState(0)
   const [page, setPage] = useState(1)
   const [resetFilter, onReset] = useToggle(false)
   const [{
@@ -57,6 +57,9 @@ const Harvest = () => {
   })
   const [{ dateTo, dateFrom }, onChangeDate, resetDate] = useForm({ dateTo: today, dateFrom: '' })
 
+  const rutRef = useRef()
+  const userRef = useRef()
+
   // destructuring
   const { especies, cuarteles, fundos } = filtros
   const { lecturas, kilos_filtro, kilos_totales, total_lecturas_filtro } = cosechas
@@ -65,13 +68,12 @@ const Harvest = () => {
   const handleOnChangePage = (e, value) => {
     toggleLoading(true)
     let offset = ((value - 1) * filterLimit) % total_lecturas_filtro
-    setOffSet(offset)
     setPage(value)
     getHarvest({
       especie: Number(filterSpecies),
       fundo: Number(filterFound),
       cuartel: Number(filterCuartel),
-      rut_cosechero: filterRut,
+      rut_cosechero: prettifyRut(filterRut),
       cantidad: Number(filterKg),
       fecha_desde: '',
       fecha_hasta: '',
@@ -83,19 +85,22 @@ const Harvest = () => {
   }
 
   const onSearch = (e) => {
+    rutRef.current.blur()
+    userRef.current.blur()
     e.preventDefault()
     toggleLoading(true)
+    setPage(1)
     getHarvest({
       especie: Number(filterSpecies),
       fundo: Number(filterFound),
       cuartel: Number(filterCuartel),
-      rut_cosechero: filterRut,
+      rut_cosechero: prettifyRut(filterRut),
       cantidad: Number(filterKg),
-      fecha_desde: moment(dateFrom).format('YYYY-MM-DD'),
+      fecha_desde: dateFrom === '' ? '' : moment(dateFrom).format('YYYY-MM-DD'),
       fecha_hasta: moment(dateTo).format('YYYY-MM-DD'),
       usuario: filterUser,
       nombre_cosechero: filterName,
-      offset: offSet,
+      offset: 0,
       limite: Number(filterLimit)
     })
   }
@@ -114,12 +119,12 @@ const Harvest = () => {
     }
 
     toggleLoading(true)
-
+    setPage(1)
     getHarvest({
       especie: Number(filterSpecies),
       fundo: Number(filterFound),
       cuartel: Number(filterCuartel),
-      rut_cosechero: filterRut,
+      rut_cosechero: prettifyRut(filterRut),
       cantidad: Number(filterKg),
       fecha_desde: moment(dateFrom).format('YYYY-MM-DD'),
       fecha_hasta: moment(dateTo).format('YYYY-MM-DD'),
@@ -149,12 +154,12 @@ const Harvest = () => {
       especie: Number(filterSpecies),
       fundo: Number(filterFound),
       cuartel: Number(filterCuartel),
-      rut_cosechero: filterRut,
-      cantidad: Number(filterKg),
-      fecha_desde: moment(dateFrom).format('YYYY-MM-DD'),
+      rut_cosechero: prettifyRut(filterRut),
+      cantidad: Number(filterKg.trim()),
+      // fecha_desde: moment(dateFrom).format('YYYY-MM-DD'),
       fecha_hasta: moment(dateTo).format('YYYY-MM-DD'),
-      usuario: filterUser,
-      nombre_cosechero: filterName,
+      usuario: filterUser.trim(),
+      nombre_cosechero: filterName.trim(),
       offset: 0,
       limite: Number(filterLimit)
     })
@@ -184,12 +189,16 @@ const Harvest = () => {
               <Th>
                 <form onSubmit={onSearch}>
                   <input
+                    ref={rutRef}
                     className="p-1 rounded-md w-24 focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                    placeholder='Rut...'
                     type="text"
                     name="filterRut"
-                    value={filterRut}
-                    placeholder='Rut...'
-                    onChange={onChangeValues} />
+                    value={prettifyRut(filterRut)}
+                    onChange={onChangeValues}
+                    onFocus={e => {
+                      e.target.select()
+                    }} />
                   <button type='submit' className='hidden' />
                 </form>
               </Th>
@@ -209,16 +218,17 @@ const Harvest = () => {
                 <form onSubmit={onSearch}>
                   <input
                     className="p-1 w-16 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                    placeholder='Cantidad...'
                     type="text"
                     name="filterKg"
                     value={filterKg}
                     onChange={onChangeValues}
-                    placeholder='Cantidad...'
-                    onKeyPress={(event) => {
-                      if (!/[0-9]/.test(event.key)) {
-                        event.preventDefault();
+                    onKeyPress={e => {
+                      if (!/[0-9 /n]/.test(e.key)) {
+                        e.preventDefault();
                       }
-                    }} />
+                    }}
+                  />
                   <button type='submit' className='hidden' />
                 </form>
               </Th>
@@ -235,12 +245,16 @@ const Harvest = () => {
               <Th>
                 <form onSubmit={onSearch}>
                   <input
+                    ref={userRef}
                     className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                     type="text"
                     name="filterUser"
                     value={filterUser}
                     placeholder='Rut...'
-                    onChange={onChangeValues} />
+                    onChange={onChangeValues}
+                    onFocus={e => {
+                      e.target.select()
+                    }} />
                   <button type='submit' className='hidden' />
                 </form>
               </Th>

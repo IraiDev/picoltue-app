@@ -24,24 +24,26 @@ const AppProvider = ({ children }) => {
    const login = async (data) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
       const body = await resp.json()
-      const { ok, usuario, token, msg } = body
-
-      console.log(body)
+      const { ok, usuario, token, msg, is_new } = body
 
       toggleLoading(false)
 
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
          setUser({ ok, usuario })
+         return { ok, usuario }
       }
       else {
-         Alert({
-            icon: 'warn',
-            title: 'Atencion',
-            content: msg,
-            showCancelButton: false,
-            timer: 6000
-         })
+         if (!is_new) {
+            Alert({
+               icon: 'warn',
+               title: 'Atencion',
+               content: msg,
+               showCancelButton: false,
+               timer: 6000
+            })
+         }
+         return { ok, msg, isNew: is_new }
       }
    }
 
@@ -49,8 +51,6 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('auth/renew')
       const body = await resp.json()
       const { ok, usuario, token } = body
-
-      // toggleLoading(false)
 
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
@@ -73,7 +73,9 @@ const AppProvider = ({ children }) => {
    const getHarvest = async (data = {}) => {
       const resp = await fetchToken('lecturas', data, 'POST')
       const body = await resp.json()
+
       toggleLoading(false)
+
       if (body.ok) {
          setParams({ ...data, offset: 0, limite: body.total_lecturas })
          setCosechas(body)
@@ -92,6 +94,7 @@ const AppProvider = ({ children }) => {
 
       const resp = await fetchToken('lecturas', params, 'POST')
       const body = await resp.json()
+
       if (body.ok) {
          let data = []
          data = body.lecturas.map(l => {
@@ -121,8 +124,9 @@ const AppProvider = ({ children }) => {
    const getSheets = async (data) => {
       const resp = await fetchToken('fichas', data, 'POST')
       const body = await resp.json()
+
       toggleLoading(false)
-      console.log('fichas: ', body)
+
       if (body.ok) {
          setInscripciones(body)
       }
@@ -142,8 +146,6 @@ const AppProvider = ({ children }) => {
 
       toggleLoading(false)
 
-      console.log(body)
-
       if (body.ok) {
          setUsersData(body)
       }
@@ -161,82 +163,112 @@ const AppProvider = ({ children }) => {
    const insertUser = async ({ payload, filters }) => {
       const resp = await fetchToken('usuarios/insert', payload, 'POST')
       const body = await resp.json()
+      const { ok, response } = body
 
       toggleLoading(false)
 
-      console.log(body)
-
-      if (body.ok) {
+      if (ok) {
          Alert({
             title: 'Atencion',
-            content: 'Usuario creado con exito',
+            content: response ? response : 'Usuario creado con exito',
             showCancelButton: false,
             timer: 6000
          })
          getUsers(filters)
+         return true
       }
       else {
          Alert({
             icon: 'error',
             title: 'Error',
-            content: 'Error al crear usuario',
+            content: response ? response : 'Error al crear usuario',
             showCancelButton: false
          })
          toggleLoading(false)
+         return false
       }
    }
 
    const updateUser = async ({ payload, filters }) => {
       const resp = await fetchToken('usuarios/update', payload, 'POST')
       const body = await resp.json()
+      const { ok, response } = body
 
       toggleLoading(false)
 
-      console.log(body)
-
-      if (body.ok) {
+      if (ok) {
          Alert({
             title: 'Atencion',
-            content: 'Usuario actualizado con exito',
+            content: response ? response : 'Usuario actualizado con exito',
             showCancelButton: false,
             timer: 6000
          })
          getUsers(filters)
+         return true
       }
       else {
          Alert({
             icon: 'error',
             title: 'Error',
-            content: 'Error al actualizar usuario',
+            content: response ? response : 'Error al actualizar usuario',
             showCancelButton: false
          })
          toggleLoading(false)
+         return false
       }
    }
 
    const resetUserPassword = async ({ payload }) => {
       const resp = await fetchToken('usuarios/reset-pass', payload, 'POST')
       const body = await resp.json()
-
-      console.log(body)
+      const { ok, response } = body
 
       toggleLoading(false)
 
-      if (body.ok) {
+      if (ok) {
          Alert({
             title: 'Atencion',
-            content: 'Contraseña reseteada con exito',
+            content: response ? response : 'Contraseña reseteada con exito',
             showCancelButton: false,
-            timer: 6000
+            timer: 4000
          })
+         return true
       }
       else {
          Alert({
             icon: 'error',
             title: 'Error',
-            content: 'Error al resetear contraseña, vuelva a intentarlo, si el error persiste comuniquese con un administrador',
+            content: response ? response : 'Error al resetear contraseña, vuelva a intentarlo, si el error persiste comuniquese con un administrador',
             showCancelButton: false
          })
+         return false
+      }
+   }
+
+   const firstLogin = async ({ payload }) => {
+      const resp = await fetchToken('auth/primer-ingreso', payload, 'POST')
+      const body = await resp.json()
+      const { ok, msg } = body
+
+      toggleLoading(false)
+
+      if (ok) {
+         Alert({
+            title: 'Atencion',
+            content: msg ? msg : 'Contraseña reseteada con exito',
+            showCancelButton: false,
+            timer: 6000
+         })
+         return true
+      }
+      else {
+         Alert({
+            icon: 'error',
+            title: 'Error',
+            content: msg ? msg : 'Error al resetear contraseña, vuelva a intentarlo, si el error persiste comuniquese con un administrador',
+            showCancelButton: false
+         })
+         return false
       }
    }
 
@@ -247,6 +279,7 @@ const AppProvider = ({ children }) => {
 
       if (ok) {
          getSheets(filters)
+         return true
       }
       else {
          Alert({
@@ -255,6 +288,7 @@ const AppProvider = ({ children }) => {
             showCancelButton: false
          })
          toggleLoading(false)
+         return false
       }
    }
 
@@ -265,6 +299,7 @@ const AppProvider = ({ children }) => {
 
       if (ok) {
          getSheets(filters)
+         return true
       }
       else {
          Alert({
@@ -273,6 +308,7 @@ const AppProvider = ({ children }) => {
             showCancelButton: false
          })
          toggleLoading(false)
+         return false
       }
    }
 
@@ -322,7 +358,8 @@ const AppProvider = ({ children }) => {
          updateUser,
          insertUser,
          resetUserPassword,
-         validateSession
+         validateSession,
+         firstLogin
       }}>
          {children}
       </AppContext.Provider>

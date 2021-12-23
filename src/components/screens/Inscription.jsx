@@ -52,12 +52,19 @@ const Inscription = () => {
    const [page, setPage] = useState(1)
    const [offSet, setOffSet] = useState(0)
    const [resetFilters, onReset] = useToggle(false)
+
    // destructuring
    const { rut, firstName, secondName, lastName, secondLastName, date, city, country, id } = values
    const { ciudades, comunas } = filtros
    // destructuring
 
-   const [{ filterRut, filterName, filterCountry, filterCity, filterLimit }, onChangeValues, reset] = useForm({
+   const [{
+      filterRut,
+      filterName,
+      filterCountry,
+      filterCity,
+      filterLimit
+   }, onChangeValues, reset] = useForm({
       filterRut: '',
       filterName: '',
       filterLimit: 10,
@@ -358,7 +365,7 @@ const Inscription = () => {
       getSheets({
          offset,
          limite: Number(filterLimit),
-         rut_trabajador: filterRut,
+         rut_trabajador: prettifyRut(filterRut),
          nombre_trabajador: filterName,
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
@@ -371,7 +378,7 @@ const Inscription = () => {
       getSheets({
          offset: 0,
          limite: Number(filterLimit),
-         rut_trabajador: filterRut,
+         rut_trabajador: prettifyRut(filterRut),
          nombre_trabajador: filterName,
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
@@ -390,7 +397,7 @@ const Inscription = () => {
       getSheets({
          offset: 0,
          limite: Number(filterLimit),
-         rut_trabajador: filterRut,
+         rut_trabajador: prettifyRut(filterRut),
          nombre_trabajador: filterName,
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
@@ -438,7 +445,6 @@ const Inscription = () => {
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
-                     <Th></Th>
                      <Th><Select options={comunas} value={filterCountry} name='filterCountry' onChange={onChangeValues} /></Th>
                      <Th><Select options={cityTable} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
                      <Th>
@@ -453,7 +459,6 @@ const Inscription = () => {
                      <Th>ID</Th>
                      <Th>RUT</Th>
                      <Th>Nombre</Th>
-                     <Th>telefono</Th>
                      <Th>comuna</Th>
                      <Th>ciudad</Th>
                      <Th>Acciones</Th>
@@ -472,7 +477,6 @@ const Inscription = () => {
                            <Td>{f.id_ficha_inscripcion}</Td>
                            <Td>{f.rut_trabajador}</Td>
                            <Td>{f.nombre} {f.segundo_nombre} {f.apellido_paterno} {f.apellido_materno}</Td>
-                           <Td>telefono</Td>
                            <Td>{f.comuna ? f.comuna.nombre : '--'}</Td>
                            <Td>{f.ciudad ? f.ciudad.nombre : '--'}</Td>
                            <Td>

@@ -22,7 +22,6 @@ import NumberFormat from 'react-number-format'
 import { UiContext } from '../../context/UiContext'
 
 const limite = [
-   { value: 5, label: '5' },
    { value: 10, label: '10' },
    { value: 25, label: '25' },
    { value: 50, label: '50' },
@@ -56,7 +55,7 @@ const UserManteiner = () => {
       filterRut: '',
       filterName: '',
       filterLogin: '',
-      filterLimit: 5,
+      filterLimit: 10,
       filterEmail: ''
    })
 
@@ -84,7 +83,7 @@ const UserManteiner = () => {
       setValues(initForm)
    }
 
-   const handleNewUser = () => {
+   const handleNewUser = async () => {
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
       const { state: ns, char: nc, list: nl } = checkForms(name)
@@ -165,8 +164,10 @@ const UserManteiner = () => {
          return
       }
 
+      toggleLoading(true)
+
       const payload = {
-         rut_user: rut,
+         rut_user: prettifyRut(rut),
          nom_user: name,
          login_user: login,
          correo_user: email,
@@ -181,11 +182,11 @@ const UserManteiner = () => {
          correo_user: filterEmail,
       }
 
-      insertUser({ payload, filters })
-      handleCloseModal()
+      const ok = await insertUser({ payload, filters })
+      ok && handleCloseModal()
    }
 
-   const handleUpdateUser = () => {
+   const handleUpdateUser = async () => {
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
       const { state: ns, char: nc, list: nl } = checkForms(name)
@@ -262,6 +263,8 @@ const UserManteiner = () => {
          return
       }
 
+      toggleLoading(true)
+
       const payload = {
          id_user: id,
          rut_user: prettifyRut(rut),
@@ -279,18 +282,19 @@ const UserManteiner = () => {
          correo_user: filterEmail,
       }
 
-      updateUser({ payload, filters })
-      handleCloseModal()
+      const ok = await updateUser({ payload, filters })
+      ok && handleCloseModal()
    }
 
    const handleResetPass = (id) => {
+      toggleLoading(true)
       const payload = { id_user: id }
       resetUserPassword({ payload })
-      handleCloseModal()
    }
 
    const onSearch = (e) => {
       e.preventDefault()
+      setPage(1)
       getUsers({
          offset: 0,
          limit: Number(filterLimit),

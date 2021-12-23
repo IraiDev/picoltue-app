@@ -1,5 +1,5 @@
 import { PDFDownloadLink } from '@react-pdf/renderer'
-import { useContext, useRef } from 'react'
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AppContext } from '../../context/AppContext'
 import { UiContext } from '../../context/UiContext'
