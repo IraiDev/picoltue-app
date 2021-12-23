@@ -71,7 +71,7 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
 
         {
           arr.map(item => (
-            <View
+            <View key={item}
               style={{
                 display: 'flex',
                 flexDirection: 'row',

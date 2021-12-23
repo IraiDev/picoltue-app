@@ -50,7 +50,7 @@ const AppProvider = ({ children }) => {
       const body = await resp.json()
       const { ok, usuario, token } = body
 
-      toggleLoading(false)
+      // toggleLoading(false)
 
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
