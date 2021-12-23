@@ -41,26 +41,28 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
             flexDirection: 'row',
             width: '100%',
             marginTop: 30,
+            border: '1px solid black',
+            backgroundColor: '#D5D8DC',
           }}
         >
-          <Text style={{ width: '10%' }} />
+          <Text style={{ width: '10%', textAlign: 'center', }}>
+            #
+          </Text>
           <Text
             style={{
-              border: '1px solid black',
               width: '50%',
               textAlign: 'center',
-              backgroundColor: '#AEB6BF',
+              borderRight: '1px solid black',
+              borderLeft: '1px solid black',
             }}
           >
             Mejores Totales
           </Text>
           <Text
             style={{
-              border: '1px solid black',
               width: '40%',
               textAlign: 'center',
               fontWeight: 'bold',
-              backgroundColor: '#AEB6BF',
             }}
           >
             KGS
@@ -73,13 +75,14 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
               style={{
                 display: 'flex',
                 flexDirection: 'row',
+                border: '1px solid black',
                 width: '100%',
               }}
             >
               <Text
                 style={{
                   width: '10%',
-                  border: '1px solid black',
+                  // border: '1px solid black',
                   textAlign: 'right',
                 }}
               >
@@ -87,7 +90,8 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
               </Text>
               <Text
                 style={{
-                  border: '1px solid black',
+                  borderLeft: '1px solid black',
+                  borderRight: '1px solid black',
                   width: '50%',
                   textAlign: 'center',
                 }}
@@ -96,7 +100,7 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
               </Text>
               <Text
                 style={{
-                  border: '1px solid black',
+                  // border: '1px solid black',
                   width: '40%',
                   textAlign: 'right',
                   fontWeight: 'bold',
@@ -112,7 +116,7 @@ const PDFResume = ({ dateTo = '21-11-2019', dateFrom = '21-11-2021' }) => (
           style={{
             fontSize: 12,
             marginTop: 25,
-            alignItems: 'center',
+            textAlign: 'center',
           }}
         >
           Fecha y hora impresion: {moment(new Date()).format('DD-MM-YYYY HH:mm:ss')}
