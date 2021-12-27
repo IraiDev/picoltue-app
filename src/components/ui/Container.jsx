@@ -32,7 +32,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                      icon={<i className="fas fa-file-export"></i>}
                   >
                      <MenuContent>
-                        <ExportExcel />
+                        <ExportExcel EnterpriseName='AGRICOLA PICOLTUE LIMITADA' />
                         <hr />
                         <PDFDownloadLink
                            className='font-semibold block text-center py-1.5 px-4 hover:bg-gray-200'

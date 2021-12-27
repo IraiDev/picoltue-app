@@ -1,10 +1,11 @@
+import moment from 'moment'
 import { useContext, useRef, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel'
 import { AppContext } from '../../context/AppContext'
 import { UiContext } from '../../context/UiContext'
 import Button from './Button'
 
-const ExportExcel = ({ onClick }) => {
+const ExportExcel = ({ onClick, EnterpriseName = 'sin nombre' }) => {
 
    const { getHarvestExport } = useContext(AppContext)
    const { toggleLoading } = useContext(UiContext)
@@ -44,10 +45,10 @@ const ExportExcel = ({ onClick }) => {
          <table className='hidden' id="table1" border='1'>
             <thead>
                <tr>
-                  <th align='left' colSpan={12}>nombre empresa</th>
+                  <th align='left' colSpan={12}>nombre empresa: {EnterpriseName}</th>
                </tr>
                <tr>
-                  <th align='left' colSpan={12}>fecha emision</th>
+                  <th align='left' colSpan={12}>fecha emision: {moment(new Date()).format('DD/MM/YYYY - HH:mm')}</th>
                </tr>
                <tr>
                   <th colSpan={12}>lecturas titulo</th>

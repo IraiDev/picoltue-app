@@ -29,7 +29,7 @@ const limite = [
 
 const today = moment(new Date()).format('YYYY-MM-DD')
 
-const Harvest = ({ fromDate }) => {
+const Harvest = () => {
 
   const { toggleLoading } = useContext(UiContext)
   const { cosechas, filtros, getHarvest, user } = useContext(AppContext)
@@ -62,6 +62,7 @@ const Harvest = ({ fromDate }) => {
     dateFrom
   }, onChangeDate, resetDate] = useForm({
     dateTo: today,
+    // dateFrom: usuario.fecha_desde
     dateFrom: ''
   })
 
@@ -69,7 +70,7 @@ const Harvest = ({ fromDate }) => {
 
   // destructuring
   const { especies, cuarteles, fundos } = filtros
-  const { lecturas, kilos_filtro, kilos_totales, total_lecturas_filtro } = cosechas
+  const { lecturas, kilos_filtro, kilos_totales, total_lecturas_filtro, total_lecturas } = cosechas
   // destructuring
 
   const getHarvestData = (offset = 0, page = 1) => {
@@ -238,7 +239,14 @@ const Harvest = ({ fromDate }) => {
               <th colSpan={2}>
                 <div className='flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1'>
                   <label >Limite</label>
-                  <Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} />
+                  <Select
+                    options={limite}
+                    value={filterLimit}
+                    name='filterLimit'
+                    onChange={onChangeValues}
+                    showAllOption={filterName === '' && filterRut === '' && filterUser === ''}
+                    title='opcion "todos" solo se permite si esta filtrando por usuario, rut o nombre'
+                  />
                 </div>
               </th>
             </tr>
@@ -294,49 +302,67 @@ const Harvest = ({ fromDate }) => {
           </TBody>
           <TFooter>
             <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
-              <td colSpan={14} className='p-2 w-full'>
-                <div className='flex justify-around items-center px-4'>
-                  <section className='text-left'>
-                    <label className='block mb-1'>
-                      Total según filtro:
-                      <NumberFormat
-                        className='text-blue-400 ml-1'
-                        value={kilos_filtro}
-                        displayType={'text'}
-                        suffix='KG'
-                        decimalSeparator=','
-                        thousandSeparator='.'
+              <td colSpan={5}>
+                {
+                  filterLimit !== '' ?
+                    <div className='flex justify-center'>
+                      <Pager
+                        page={page}
+                        onPageChange={handleOnChangePage}
+                        pageRangeDisplayed={5}
+                        limit={filterLimit}
+                        totals={total_lecturas_filtro}
                       />
-                    </label>
-                    <label className='block'>
-                      Total Kilos:
-                      <NumberFormat
-                        className='text-blue-400 ml-1'
-                        value={kilos_totales}
-                        displayType={'text'}
-                        suffix='KG'
-                        decimalSeparator=','
-                        thousandSeparator='.'
-                      />
-                    </label>
-                  </section>
-                  <Pager
-                    page={page}
-                    onPageChange={handleOnChangePage}
-                    pageRangeDisplayed={5}
-                    limit={filterLimit}
-                    totals={total_lecturas_filtro}
+                    </div>
+                    :
+                    <div></div>
+                }
+              </td>
+              <td className='text-left p-2'>
+                <label className='block mb-1'>Total kilos según filtro:</label>
+                <label className='block'>Total Kilos:</label>
+              </td>
+              <td className='text-blue-400 text-right'>
+                <NumberFormat
+                  className='block mb-1'
+                  value={kilos_filtro}
+                  displayType={'text'}
+                  decimalSeparator=','
+                  thousandSeparator='.'
+                />
+                <NumberFormat
+                  className='block'
+                  value={kilos_totales}
+                  displayType={'text'}
+                  decimalSeparator=','
+                  thousandSeparator='.'
+                />
+              </td>
+              <td className='text-left p-2'>
+                <label className='block mb-1'>KG</label>
+                <label className='block'>KG</label>
+              </td>
+              <td colSpan={5}>
+                <label>
+                  lecturas según filtro:
+                  <NumberFormat
+                    className='ml-1'
+                    value={total_lecturas_filtro}
+                    displayType={'text'}
+                    decimalSeparator=','
+                    thousandSeparator='.'
                   />
-                  <label>lecturas según filtro:
-                    <NumberFormat
-                      className='ml-1'
-                      value={total_lecturas_filtro}
-                      displayType={'text'}
-                      decimalSeparator=','
-                      thousandSeparator='.'
-                    />
-                  </label>
-                </div>
+                </label>
+                <label className='block'>
+                  lecturas totales:
+                  <NumberFormat
+                    className='ml-1'
+                    value={total_lecturas}
+                    displayType={'text'}
+                    decimalSeparator=','
+                    thousandSeparator='.'
+                  />
+                </label>
               </td>
             </tr>
           </TFooter>

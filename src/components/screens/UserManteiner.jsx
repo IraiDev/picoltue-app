@@ -411,7 +411,15 @@ const UserManteiner = () => {
                            <button className='hidden' type='submit'></button>
                         </form>
                      </Th>
-                     <Th><Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} /></Th>
+                     <Th>
+                        <Select
+                           options={limite}
+                           value={filterLimit}
+                           name='filterLimit'
+                           onChange={onChangeValues}
+                           showAllOption={filterLogin === '' && filterEmail === '' && filterName === '' && filterRut === ''}
+                        />
+                     </Th>
                   </tr>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 uppercase">
                      <Th>#</Th>
@@ -478,13 +486,18 @@ const UserManteiner = () => {
                                  thousandSeparator='.'
                               />
                            </label>
-                           <Pager
-                              page={page}
-                              onPageChange={handleOnChangePage}
-                              pageRangeDisplayed={5}
-                              limit={filterLimit}
-                              totals={usersData.total_filtro}
-                           />
+                           {
+                              filterLimit !== '' ?
+                                 <Pager
+                                    page={page}
+                                    onPageChange={handleOnChangePage}
+                                    pageRangeDisplayed={5}
+                                    limit={filterLimit}
+                                    totals={usersData.total_filtro}
+                                 />
+                                 :
+                                 <div></div>
+                           }
                            <label>Total según filtro :
                               <NumberFormat
                                  className='ml-1'

@@ -76,7 +76,7 @@ const Inscription = () => {
    const cityTable = useDependSelect(filterCountry, ciudades)
    const cityForm = useDependSelect(country, ciudades)
 
-   const getSheetsData = (offset, page) => {
+   const getSheetsData = (offset = 0, page = 1) => {
       toggleLoading(true)
       setPage(page)
       getSheets({
@@ -449,7 +449,13 @@ const Inscription = () => {
                      <Th>
                         <div className='flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1 w-max'>
                            <label >Limite</label>
-                           <Select options={limite} value={filterLimit} name='filterLimit' onChange={onChangeValues} />
+                           <Select
+                              options={limite}
+                              value={filterLimit}
+                              name='filterLimit'
+                              onChange={onChangeValues}
+                              showAllOption={filterName === '' && filterRut === ''}
+                           />
                         </div>
                      </Th>
                   </tr>
@@ -508,13 +514,18 @@ const Inscription = () => {
                                  thousandSeparator='.'
                               />
                            </label>
-                           <Pager
-                              page={page}
-                              onPageChange={handleOnChangePage}
-                              pageRangeDisplayed={5}
-                              limit={filterLimit}
-                              totals={inscripciones.fichas_pagina}
-                           />
+                           {
+                              filterLimit !== '' ?
+                                 <Pager
+                                    page={page}
+                                    onPageChange={handleOnChangePage}
+                                    pageRangeDisplayed={5}
+                                    limit={filterLimit}
+                                    totals={inscripciones.fichas_pagina}
+                                 />
+                                 :
+                                 <div></div>
+                           }
                            <label>Total según filtro :
                               <NumberFormat
                                  className='ml-1'
