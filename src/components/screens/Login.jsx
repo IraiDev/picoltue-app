@@ -12,7 +12,7 @@ import Modal from '../ui/Modal'
 
 export const Login = () => {
   const navigate = useNavigate()
-  const { login, firstLogin } = useContext(AppContext)
+  const { login, firstLogin, resetPassword } = useContext(AppContext)
   const { toggleLoading } = useContext(UiContext)
   const [showModalPin, toggleModalPin] = useToggle(false)
   const [showPass, setShowPass] = useState(false)
@@ -22,8 +22,8 @@ export const Login = () => {
     newPass,
     repeatPass
   }, onChangeValues, reset] = useForm({
-    user: 'sacuna',
-    pass: 'Thomas1994!',
+    user: '',
+    pass: '',
     newPass: '',
     repeatPass: ''
   })
@@ -59,7 +59,19 @@ export const Login = () => {
       })
       return
     }
-    reset()
+
+    const action = () => {
+      resetPassword({ login_user: user })
+      reset()
+    }
+
+    Alert({
+      title: 'Atención',
+      content: '¿Esta seguro de reestablecer su contraseña?',
+      cancelButton: 'No, cancelar',
+      confirmButton: 'Si, reestablecer',
+      action
+    })
   }
 
   const handleCloseModal = () => {
@@ -145,7 +157,9 @@ export const Login = () => {
             Mostrar contraseña
           </label>
           <label
-            className='hover:text-blue-500 hover:underline capitalize mx-auto transition duration-300 cursor-pointer'
+            className='
+              hover:text-blue-600 capitalize mx-auto transition duration-200 
+              cursor-pointer hover:bg-blue-100 rounded-full px-2 py-1 text-blue-400'
             title='Para recuperar contraseña debe escribir un su usuario en el campo "USUARIO"'
             onClick={handleRecoverPass} >
             recuperar contraseña

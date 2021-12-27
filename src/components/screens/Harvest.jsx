@@ -29,13 +29,14 @@ const limite = [
 
 const today = moment(new Date()).format('YYYY-MM-DD')
 
-const Harvest = () => {
+const Harvest = ({ fromDate }) => {
 
   const { toggleLoading } = useContext(UiContext)
-  const { cosechas, filtros, getHarvest } = useContext(AppContext)
+  const { cosechas, filtros, getHarvest, user } = useContext(AppContext)
   const [showDateModal, toggleDateModal] = useToggle(false)
   const [page, setPage] = useState(1)
   const [resetFilter, onReset] = useToggle(false)
+  const { usuario } = user
   const [{
     filterRut,
     filterName,
@@ -55,6 +56,7 @@ const Harvest = () => {
     filterCuartel: '',
     filterSpecies: ''
   })
+
   const [{
     dateTo,
     dateFrom
@@ -63,7 +65,7 @@ const Harvest = () => {
     dateFrom: ''
   })
 
-  const rutRef = useRef(), userRef = useRef(), kgRef = useRef(), nameRef = useRef()
+  const rutRef = useRef(), userRef = useRef(), nameRef = useRef()
 
   // destructuring
   const { especies, cuarteles, fundos } = filtros
@@ -97,7 +99,6 @@ const Harvest = () => {
   const onSearch = (e) => {
     rutRef.current.blur()
     userRef.current.blur()
-    kgRef.current.blur()
     nameRef.current.blur()
     e.preventDefault()
     getHarvestData()
@@ -187,7 +188,7 @@ const Harvest = () => {
                 </form>
               </Th>
               <Th>
-                <form onSubmit={onSearch}>
+                {/* <form onSubmit={onSearch}>
                   <input
                     ref={kgRef}
                     className="p-1 w-16 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
@@ -199,14 +200,14 @@ const Harvest = () => {
                     onFocus={e => {
                       e.target.select()
                     }}
-                    onKeyPress={e => {
-                      if (!/[0-9 /n]/.test(e.key)) {
-                        e.preventDefault();
-                      }
-                    }}
+                  onKeyPress={e => {
+                    if (!/[0-9 /n]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   />
                   <button type='submit' className='hidden' />
-                </form>
+                </form> */}
               </Th>
               <Th></Th>
               <Th>

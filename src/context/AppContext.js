@@ -39,8 +39,7 @@ const AppProvider = ({ children }) => {
                icon: 'warn',
                title: 'Atencion',
                content: msg,
-               showCancelButton: false,
-               timer: 6000
+               showCancelButton: false
             })
          }
          return { ok, msg, isNew: is_new }
@@ -68,6 +67,28 @@ const AppProvider = ({ children }) => {
    const logout = () => {
       window.localStorage.removeItem('token-picoltue')
       setUser({ ok: false })
+   }
+
+   const resetPassword = async (data) => {
+      const resp = await fetchToken('auth/recuperar-pass', data, 'POST')
+      const body = await resp.json()
+      const { ok, response } = body
+
+      if (ok) {
+         Alert({
+            title: 'Atencion',
+            content: response,
+            showCancelButton: false
+         })
+      }
+      else {
+         Alert({
+            title: 'Atencion',
+            icon: 'warn',
+            content: response,
+            showCancelButton: false
+         })
+      }
    }
 
    const getHarvest = async (data = {}) => {
@@ -359,7 +380,8 @@ const AppProvider = ({ children }) => {
          insertUser,
          resetUserPassword,
          validateSession,
-         firstLogin
+         firstLogin,
+         resetPassword
       }}>
          {children}
       </AppContext.Provider>
