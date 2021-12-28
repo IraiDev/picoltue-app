@@ -20,6 +20,7 @@ const AppProvider = ({ children }) => {
    const [usersData, setUsersData] = useState({})
    const [filtros, setFiltros] = useState({})
    const [params, setParams] = useState({})
+   const [resume, setResume] = useState({})
 
    const login = async (data) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
@@ -100,6 +101,7 @@ const AppProvider = ({ children }) => {
       if (body.ok) {
          setParams({ ...data, offset: 0, limite: body.total_lecturas })
          setCosechas(body)
+         getHarvestPDFResumeExport(data)
       }
       else {
          Alert({
@@ -139,6 +141,20 @@ const AppProvider = ({ children }) => {
       else {
          console.log('error export excel data')
          return { ok: false, data: [] }
+      }
+   }
+
+   const getHarvestPDFResumeExport = async (data) => {
+      const resp = await fetchToken('lecturas/pdf-general', data, 'POST')
+      const body = await resp.json()
+
+      const { ok, response } = body
+
+      if (ok) {
+         setResume(response)
+      }
+      else {
+         console.log('error export pdf data')
       }
    }
 
@@ -381,7 +397,8 @@ const AppProvider = ({ children }) => {
          resetUserPassword,
          validateSession,
          firstLogin,
-         resetPassword
+         resetPassword,
+         resume
       }}>
          {children}
       </AppContext.Provider>
