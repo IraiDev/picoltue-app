@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
 import { UiContext } from '../../context/UiContext'
 import { useWindowSize } from '../../hooks/useSize'
@@ -6,12 +6,26 @@ import Menu from '../menu/Menu'
 import MenuContent from '../menu/MenuContent'
 import Button from './Button'
 import ExportExcel from './ExportExcel'
-import ResumePDF from '../pdf/ResumePDF'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import PDFResume from '../pdf/PDFResume'
 
 const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal = () => { } }) => {
-   const { user } = useContext(AppContext)
+   const { user, getHarvestPDFResumeExport, params } = useContext(AppContext)
    const { toggleSidebar } = useContext(UiContext)
+   const [data, setData] = useState({})
    const { width } = useWindowSize()
+
+   const getData = async () => {
+      const resp = await getHarvestPDFResumeExport()
+      console.log(resp)
+      setData(resp)
+   }
+
+   useEffect(() => {
+      getData()
+
+      // eslint-disable-next-line
+   }, [params])
 
    return (
       <>
@@ -33,7 +47,14 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                         <MenuContent>
                            <ExportExcel EnterpriseName='AGRICOLA PICOLTUE LIMITADA' />
                            <hr />
-                           <ResumePDF />
+
+                           {/* <ResumePDF /> */}
+                           {/* <Link to='pdf' target='_blank' >pdf</Link> */}
+                           <PDFDownloadLink
+                              fileName='resumen lecturas'
+                              document={<PDFResume data={data} />} >
+                              <Button className='hover: text-red-400' name='pdf' />
+                           </PDFDownloadLink>
                         </MenuContent>
                      </Menu>
                   }

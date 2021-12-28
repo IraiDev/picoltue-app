@@ -152,9 +152,11 @@ const AppProvider = ({ children }) => {
 
       if (ok) {
          setResume(response)
+         return response
       }
       else {
          console.log('error export pdf data')
+         return {}
       }
    }
 
@@ -398,7 +400,9 @@ const AppProvider = ({ children }) => {
          validateSession,
          firstLogin,
          resetPassword,
-         resume
+         resume,
+         getHarvestPDFResumeExport,
+         params
       }}>
          {children}
       </AppContext.Provider>
