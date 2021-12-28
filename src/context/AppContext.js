@@ -31,6 +31,7 @@ const AppProvider = ({ children }) => {
 
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
+         window.localStorage.setItem('picoltue-fecha-desde', usuario.fecha_desde)
          setUser({ ok, usuario })
          return { ok, usuario }
       }
@@ -54,6 +55,7 @@ const AppProvider = ({ children }) => {
 
       if (ok) {
          window.localStorage.setItem('token-picoltue', token)
+         window.localStorage.setItem('picoltue-fecha-desde', usuario.fecha_desde)
          setUser({ ok, usuario })
       }
       else {

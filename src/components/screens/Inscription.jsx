@@ -416,7 +416,7 @@ const Inscription = () => {
                         <form onSubmit={onSearch}>
                            <input
                               ref={rutRef}
-                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              className="p-1 w-full rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterRut"
                               value={filterRut}
@@ -480,10 +480,10 @@ const Inscription = () => {
                               </span>
                            </Td>
                            <Td>{f.id_ficha_inscripcion}</Td>
-                           <Td>{f.rut_trabajador}</Td>
-                           <Td>{f.nombre} {f.segundo_nombre} {f.apellido_paterno} {f.apellido_materno}</Td>
-                           <Td>{f.comuna ? f.comuna.nombre : '--'}</Td>
-                           <Td>{f.ciudad ? f.ciudad.nombre : '--'}</Td>
+                           <Td className='w-max'>{f.rut_trabajador}</Td>
+                           <Td className='w-max'>{f.nombre} {f.segundo_nombre} {f.apellido_paterno} {f.apellido_materno}</Td>
+                           <Td className='w-max'>{f.comuna ? f.comuna.nombre : '--'}</Td>
+                           <Td className='w-max'>{f.ciudad ? f.ciudad.nombre : '--'}</Td>
                            <Td>
                               <div className="flex items-center justify-center">
                                  <Button

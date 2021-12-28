@@ -17,7 +17,6 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
 
    const getData = async () => {
       const resp = await getHarvestPDFResumeExport()
-      console.log(resp)
       setData(resp)
    }
 
@@ -53,7 +52,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                            <PDFDownloadLink
                               fileName='resumen lecturas'
                               document={<PDFResume data={data} />} >
-                              <Button className='hover: text-red-400' name='pdf' />
+                              <Button className='hover:bg-gray-200' type='iconText' name='Resumen' icon='fas fa-file-pdf text-red-400' />
                            </PDFDownloadLink>
                         </MenuContent>
                      </Menu>

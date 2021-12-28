@@ -351,7 +351,7 @@ const UserManteiner = () => {
                         <form onSubmit={onSearch}>
                            <input
                               ref={rutRef}
-                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterRut"
                               value={prettifyRut(filterRut)}
@@ -367,7 +367,7 @@ const UserManteiner = () => {
                         <form onSubmit={onSearch}>
                            <input
                               ref={nameRef}
-                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterName"
                               value={filterName}
@@ -383,7 +383,7 @@ const UserManteiner = () => {
                         <form onSubmit={onSearch}>
                            <input
                               ref={loginRef}
-                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterLogin"
                               value={filterLogin}
@@ -399,7 +399,7 @@ const UserManteiner = () => {
                         <form onSubmit={onSearch}>
                            <input
                               ref={emailRef}
-                              className="p-1 rounded-md focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                              className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterEmail"
                               value={filterEmail}
@@ -443,18 +443,10 @@ const UserManteiner = () => {
                                  {i + 1}
                               </span>
                            </Td>
-                           <Td>
-                              {us.rut_user}
-                           </Td>
-                           <Td>
-                              {us.nom_user}
-                           </Td>
-                           <Td>
-                              {us.login_user}
-                           </Td>
-                           <Td>
-                              {us.correo_user}
-                           </Td>
+                           <Td className='w-max'>{us.rut_user}</Td>
+                           <Td className='uppercase w-max'>{us.nom_user}</Td>
+                           <Td className='w-max'>{us.login_user}</Td>
+                           <Td className='w-max'>{us.correo_user}</Td>
                            <Td>
                               <div className="flex items-center justify-center">
                                  <Button

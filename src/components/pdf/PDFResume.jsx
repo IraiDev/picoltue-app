@@ -5,8 +5,6 @@ import ViewContainer from './ViewContainer'
 
 const PDFResume = ({ data }) => {
 
-  console.log('data recibida: ', data)
-
   return (
     <Document>
       <Page size="A4">
@@ -22,7 +20,7 @@ const PDFResume = ({ data }) => {
             {data.general && data.general.msg_filtro_fecha}
           </Text>
 
-          <Text style={{ fontSize: 20, marginTop: 5, marginBottom: 5, alignItems: 'left', }}>
+          <Text style={{ fontSize: 16, marginTop: 5, marginBottom: 5, alignItems: 'left', }}>
             TOTAL GENERAL
           </Text>
 

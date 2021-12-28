@@ -31,12 +31,12 @@ const today = moment(new Date()).format('YYYY-MM-DD')
 
 const Harvest = () => {
 
+  const date_from = window.localStorage.getItem('picoltue-fecha-desde')
   const { toggleLoading } = useContext(UiContext)
-  const { cosechas, filtros, getHarvest, user } = useContext(AppContext)
+  const { cosechas, filtros, getHarvest } = useContext(AppContext)
   const [showDateModal, toggleDateModal] = useToggle(false)
   const [page, setPage] = useState(1)
   const [resetFilter, onReset] = useToggle(false)
-  const { usuario } = user
   const [{
     filterRut,
     filterName,
@@ -62,8 +62,7 @@ const Harvest = () => {
     dateFrom
   }, onChangeDate, resetDate] = useForm({
     dateTo: today,
-    // dateFrom: usuario.fecha_desde
-    dateFrom: ''
+    dateFrom: date_from
   })
 
   const rutRef = useRef(), userRef = useRef(), nameRef = useRef()
@@ -280,7 +279,7 @@ const Harvest = () => {
                   <Td children={l.desc_cuartel} />
                   <Td children={l.desc_especie} />
                   <Td children={l.rut_trabajador} />
-                  <Td children={l.nombre_cosechero} />
+                  <Td className='w-max' children={l.nombre_cosechero} />
                   <Td align='text-right'>
                     <NumberFormat
                       className='text-blue-400 ml-1 font-semibold'
@@ -291,7 +290,7 @@ const Harvest = () => {
                     />
                   </Td>
                   <Td align='text-left' children={l.desc_tipo_med} />
-                  <Td children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
+                  <Td className='w-max' children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
                   <Td children={l.id_dispo} />
                   <Td children={l.rut_supervisor} />
                   <Td children={l.id} />

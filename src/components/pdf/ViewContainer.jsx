@@ -1,8 +1,15 @@
 import { Text, View } from '@react-pdf/renderer'
 import React from 'react'
 
-const ViewContainer = ({ col1, col2, col3, align }) => {
-  const { c1 = 'center', c2 = 'center', c3 = 'center' } = align
+const ViewContainer = ({
+  col1,
+  col2,
+  col3,
+  align = { c1: 'center', c2: 'center', c3: 'center' },
+  width = { w1: '40%', w2: '30%', w3: '30%' }
+}) => {
+  const { c1, c2, c3 } = align
+  const { w1, w2, w3 } = width
   return (
     <View
       style={{
@@ -15,7 +22,7 @@ const ViewContainer = ({ col1, col2, col3, align }) => {
     >
       <Text
         style={{
-          width: '40%',
+          width: w1,
           textAlign: c1,
           padding: '2px'
         }}
@@ -26,7 +33,7 @@ const ViewContainer = ({ col1, col2, col3, align }) => {
         style={{
           borderLeft: '1px solid black',
           borderRight: '1px solid black',
-          width: '30%',
+          width: w2,
           textAlign: c2,
           padding: '2px'
         }}
@@ -35,7 +42,7 @@ const ViewContainer = ({ col1, col2, col3, align }) => {
       </Text>
       <Text
         style={{
-          width: '30%',
+          width: w3,
           textAlign: c3,
           padding: '2px'
         }}
