@@ -49,9 +49,6 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                         <MenuContent>
                            <ExportExcel EnterpriseName='AGRICOLA PICOLTUE LIMITADA' />
                            <hr />
-
-                           {/* <ResumePDF /> */}
-                           {/* <Link to='pdf' target='_blank' >pdf</Link> */}
                            <PDFDownloadLink
                               fileName='resumen cosechas'
                               document={<PDFResume data={resume} />} >

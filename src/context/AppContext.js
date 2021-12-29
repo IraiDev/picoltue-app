@@ -169,7 +169,6 @@ const AppProvider = ({ children }) => {
       const { ok, response } = body
 
       if (ok) {
-         console.log(response)
          return response
       }
       else {
