@@ -153,6 +153,7 @@ const AppProvider = ({ children }) => {
       const { ok, response } = body
 
       if (ok) {
+         console.log(response)
          setResume(response)
          return response
       }
