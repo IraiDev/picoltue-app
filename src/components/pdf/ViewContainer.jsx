@@ -6,7 +6,8 @@ const ViewContainer = ({
   col2,
   col3,
   align = { c1: 'center', c2: 'center', c3: 'center' },
-  width = { w1: '40%', w2: '30%', w3: '30%' }
+  width = { w1: '30%', w2: '40%', w3: '30%' },
+  bg = '',
 }) => {
   const { c1, c2, c3 } = align
   const { w1, w2, w3 } = width
@@ -17,7 +18,8 @@ const ViewContainer = ({
         flexDirection: 'row',
         border: '1px solid black',
         width: '100%',
-        fontSize: '14px'
+        fontSize: '14px',
+        backgroundColor: bg,
       }}
     >
       <Text

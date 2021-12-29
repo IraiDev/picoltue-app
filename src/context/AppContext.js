@@ -153,8 +153,23 @@ const AppProvider = ({ children }) => {
       const { ok, response } = body
 
       if (ok) {
-         console.log(response)
          setResume(response)
+         return response
+      }
+      else {
+         console.log('error export pdf data')
+         return {}
+      }
+   }
+
+   const getHarvestPDFEspecificExport = async (data) => {
+      const resp = await fetchToken('lecturas/pdf-especifico', data, 'POST')
+      const body = await resp.json()
+
+      const { ok, response } = body
+
+      if (ok) {
+         console.log(response)
          return response
       }
       else {
@@ -405,6 +420,7 @@ const AppProvider = ({ children }) => {
          resetPassword,
          resume,
          getHarvestPDFResumeExport,
+         getHarvestPDFEspecificExport,
          params
       }}>
          {children}
