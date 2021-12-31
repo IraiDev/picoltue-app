@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { AppContext } from '../../context/AppContext'
 import { UiContext } from '../../context/UiContext'
 import { useWindowSize } from '../../hooks/useSize'
@@ -11,23 +11,13 @@ import PDFResume from '../pdf/PDFResume'
 import PDFEspecific from '../pdf/PDFEspecific'
 
 const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal = () => { } }) => {
-   const { user, getHarvestPDFResumeExport, getHarvestPDFEspecificExport, params } = useContext(AppContext)
+   const { user, pdfData } = useContext(AppContext)
    const { toggleSidebar } = useContext(UiContext)
-   const [resume, setResume] = useState({})
-   const [especific, setEspecific] = useState({})
    const { width } = useWindowSize()
 
-   const getData = async () => {
-      const resp = await getHarvestPDFResumeExport()
-      setResume(resp)
-      const resp2 = await getHarvestPDFEspecificExport()
-      setEspecific(resp2)
-   }
+   const handleDownloadPDF = () => {
 
-   useEffect(() => {
-      getData()
-      // eslint-disable-next-line
-   }, [params])
+   }
 
    return (
       <>
@@ -51,13 +41,13 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                            <hr />
                            <PDFDownloadLink
                               fileName='resumen cosechas'
-                              document={<PDFResume data={resume} />} >
+                              document={<PDFResume data={pdfData.resume} />} >
                               <Button className='hover:bg-gray-200' type='iconText' name='Resumen' icon='fas fa-file-pdf text-red-400' />
                            </PDFDownloadLink>
                            <hr />
                            <PDFDownloadLink
                               fileName='especifico cosechas'
-                              document={<PDFEspecific data={especific} />} >
+                              document={<PDFEspecific data={pdfData.especific} />} >
                               <Button className='hover:bg-gray-200' type='iconText' name='Especifico' icon='fas fa-file-pdf text-red-400' />
                            </PDFDownloadLink>
                         </MenuContent>

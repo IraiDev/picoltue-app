@@ -20,7 +20,7 @@ const AppProvider = ({ children }) => {
    const [usersData, setUsersData] = useState({})
    const [filtros, setFiltros] = useState({})
    const [params, setParams] = useState({})
-   const [resume, setResume] = useState({})
+   const [pdfData, setPdfData] = useState({ resume: {}, especific: {} })
 
    const login = async (data) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
@@ -103,7 +103,6 @@ const AppProvider = ({ children }) => {
       if (body.ok) {
          setParams({ ...data, offset: 0, limite: body.total_lecturas })
          setCosechas(body)
-         getHarvestPDFResumeExport(data)
       }
       else {
          Alert({
@@ -146,15 +145,14 @@ const AppProvider = ({ children }) => {
       }
    }
 
-   const getHarvestPDFResumeExport = async (data) => {
-      const resp = await fetchToken('lecturas/pdf-general', data, 'POST')
+   const getHarvestPDFResumeExport = async () => {
+      const resp = await fetchToken('lecturas/pdf-general', {}, 'POST')
       const body = await resp.json()
+      const resp2 = await fetchToken('lecturas/pdf-especifico', {}, 'POST')
+      const body2 = await resp2.json()
 
-      const { ok, response } = body
-
-      if (ok) {
-         setResume(response)
-         return response
+      if (body.ok && body2.ok) {
+         setPdfData({ especific: body2.response, resume: body.response })
       }
       else {
          console.log('error export pdf data')
@@ -162,14 +160,14 @@ const AppProvider = ({ children }) => {
       }
    }
 
-   const getHarvestPDFEspecificExport = async (data) => {
-      const resp = await fetchToken('lecturas/pdf-especifico', data, 'POST')
+   const getHarvestPDFEspecificExport = async () => {
+      const resp = await fetchToken('lecturas/pdf-especifico', {}, 'POST')
       const body = await resp.json()
 
       const { ok, response } = body
 
       if (ok) {
-         return response
+         setPdfData({ ...pdfData, especific: response })
       }
       else {
          console.log('error export pdf data')
@@ -392,6 +390,8 @@ const AppProvider = ({ children }) => {
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
          getFilters()
+         // getHarvestPDFResumeExport()
+         // getHarvestPDFEspecificExport()
       }
       // eslint-disable-next-line
    }, [user])
@@ -417,10 +417,9 @@ const AppProvider = ({ children }) => {
          validateSession,
          firstLogin,
          resetPassword,
-         resume,
          getHarvestPDFResumeExport,
-         getHarvestPDFEspecificExport,
-         params
+         params,
+         pdfData
       }}>
          {children}
       </AppContext.Provider>

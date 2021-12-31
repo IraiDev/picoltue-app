@@ -13,12 +13,13 @@ const { login } = routes
 
 const AppRoutes = () => {
   const { ShowLoading } = useContext(UiContext)
-  const { validateSession } = useContext(AppContext)
+  const { validateSession, getHarvestPDFResumeExport } = useContext(AppContext)
 
   useEffect(() => {
     const token = window.localStorage.getItem('token-picoltue')
     if (token) {
       validateSession()
+      getHarvestPDFResumeExport()
     }
     // eslint-disable-next-line
   }, [])
