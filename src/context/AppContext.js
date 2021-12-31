@@ -148,15 +148,13 @@ const AppProvider = ({ children }) => {
    const getHarvestPDFResumeExport = async () => {
       const resp = await fetchToken('lecturas/pdf-general', {}, 'POST')
       const body = await resp.json()
-      const resp2 = await fetchToken('lecturas/pdf-especifico', {}, 'POST')
-      const body2 = await resp2.json()
 
-      if (body.ok && body2.ok) {
-         setPdfData({ especific: body2.response, resume: body.response })
+      if (body.ok) {
+         return { ok: body.ok, data: body.response }
       }
       else {
          console.log('error export pdf data')
-         return {}
+         return { ok: body.ok, data: {} }
       }
    }
 
@@ -164,14 +162,13 @@ const AppProvider = ({ children }) => {
       const resp = await fetchToken('lecturas/pdf-especifico', {}, 'POST')
       const body = await resp.json()
 
-      const { ok, response } = body
-
-      if (ok) {
-         setPdfData({ ...pdfData, especific: response })
+      if (body.ok) {
+         console.log(body.response)
+         return { ok: body.ok, data: body.response }
       }
       else {
          console.log('error export pdf data')
-         return {}
+         return { ok: body.ok, data: {} }
       }
    }
 
@@ -390,8 +387,6 @@ const AppProvider = ({ children }) => {
       const token = window.localStorage.getItem('token-picoltue')
       if (token) {
          getFilters()
-         // getHarvestPDFResumeExport()
-         // getHarvestPDFEspecificExport()
       }
       // eslint-disable-next-line
    }, [user])
@@ -418,6 +413,7 @@ const AppProvider = ({ children }) => {
          firstLogin,
          resetPassword,
          getHarvestPDFResumeExport,
+         getHarvestPDFEspecificExport,
          params,
          pdfData
       }}>
