@@ -200,7 +200,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
 
    }
 
-   const handleExportExcel = async () => {
+   const handleDownloadExcel = async () => {
 
       toggleLoading(true)
       const resp = await getHarvestExport()
@@ -252,7 +252,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                               type='iconText'
                               name='Excel'
                               icon='fas fa-file-excel text-green-500'
-                              onClick={handleExportExcel}
+                              onClick={handleDownloadExcel}
                            />
                            <hr />
                            <Button
