@@ -5,12 +5,12 @@ import { useWindowSize } from '../../hooks/useSize'
 import Menu from '../menu/Menu'
 import MenuContent from '../menu/MenuContent'
 import Button from './Button'
-import ExportExcel from './ExportExcel'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import logo from '../../assets/img/logo150x150.png'
 import moment from 'moment'
-import { numberFormat } from '../../helpers/helpers';
+import { numberFormat } from '../../helpers/helpers'
+import ExportJsonExcel from 'js-export-excel'
 
 const arrayComplement = [
    { label: 'Cantidad de Cosecheros', unit: 'Unidad' },
@@ -21,7 +21,7 @@ const arrayComplement = [
 ]
 
 const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal = () => { } }) => {
-   const { user, getHarvestPDFEspecificExport, getHarvestPDFResumeExport } = useContext(AppContext)
+   const { user, getHarvestPDFEspecificExport, getHarvestPDFResumeExport, getHarvestExport } = useContext(AppContext)
    const { toggleSidebar, toggleLoading } = useContext(UiContext)
    const { width } = useWindowSize()
 
@@ -200,6 +200,33 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
 
    }
 
+   const handleExportExcel = async () => {
+
+      toggleLoading(true)
+      const resp = await getHarvestExport()
+      toggleLoading(false)
+
+      if (!resp.ok) return
+      const { data } = resp
+
+      let option = {}
+
+      option.fileName = 'lecturas cosechas'
+
+      option.datas = [
+         {
+            sheetData: data,
+            sheetName: 'lecturas',
+            // sheetFilter: ["two", "one"],
+            sheetHeader: ['FUNDO', 'CUARTEL', 'ESPECIE', 'RUT COSECHERO', 'NOMBRE COSECHERO', 'CANTIDAD', 'U. MEDIDA', 'FECHA LECTURA', 'EQUIPO', 'USUARIO', 'ID SERV', 'ID LOCAL'],
+            columnWidths: ['', '', '', '', '', '', '', '', '', '', '', ''],
+         }
+      ]
+
+      let toExcel = new ExportJsonExcel(option)
+      toExcel.saveExcel()
+   }
+
    return (
       <>
          <div className="h-screen w-full bg-white p-6 ri">
@@ -218,10 +245,18 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                         icon={<i className="fas fa-file-export"></i>}
                      >
                         <MenuContent>
-                           <ExportExcel EnterpriseName='AGRICOLA PICOLTUE LIMITADA' />
+                           {/* <ExportExcel EnterpriseName='AGRICOLA PICOLTUE LIMITADA' /> */}
+                           {/* <hr /> */}
+                           <Button
+                              className='hover:bg-gray-200 w-full text-left'
+                              type='iconText'
+                              name='Excel'
+                              icon='fas fa-file-excel text-green-500'
+                              onClick={handleExportExcel}
+                           />
                            <hr />
                            <Button
-                              className='hover:bg-gray-200 w-full'
+                              className='hover:bg-gray-200 w-full text-left'
                               type='iconText'
                               name='Especifico'
                               icon='fas fa-file-pdf text-red-400'
@@ -229,7 +264,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                            />
                            <hr />
                            <Button
-                              className='hover:bg-gray-200 w-full'
+                              className='hover:bg-gray-200 w-full text-left'
                               type='iconText'
                               name='Resumen'
                               icon='fas fa-file-pdf text-red-400'
