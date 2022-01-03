@@ -20,7 +20,6 @@ const AppProvider = ({ children }) => {
    const [usersData, setUsersData] = useState({})
    const [filtros, setFiltros] = useState({})
    const [params, setParams] = useState({})
-   const [pdfData, setPdfData] = useState({ resume: {}, especific: {} })
 
    const login = async (data) => {
       const resp = await fetchUnToken('auth/login', data, 'POST')
@@ -150,6 +149,7 @@ const AppProvider = ({ children }) => {
       const body = await resp.json()
 
       if (body.ok) {
+         console.log(body.response)
          return { ok: body.ok, data: body.response }
       }
       else {
@@ -163,7 +163,6 @@ const AppProvider = ({ children }) => {
       const body = await resp.json()
 
       if (body.ok) {
-         console.log(body.response)
          return { ok: body.ok, data: body.response }
       }
       else {
@@ -414,8 +413,7 @@ const AppProvider = ({ children }) => {
          resetPassword,
          getHarvestPDFResumeExport,
          getHarvestPDFEspecificExport,
-         params,
-         pdfData
+         params
       }}>
          {children}
       </AppContext.Provider>

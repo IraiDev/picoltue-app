@@ -10,26 +10,33 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import logo from '../../assets/img/logo150x150.png'
 import moment from 'moment'
+import { numberFormat } from '../../helpers/helpers';
+
+const arrayComplement = [
+   { label: 'Cantidad de Cosecheros', unit: 'Unidad' },
+   { label: 'Kilogramos Totales', unit: 'KGS' },
+   { label: 'Bandejas Totales', unit: 'Unidades' },
+   { label: 'Promedio Cosecheros', unit: 'KG / Cosechero' },
+   { label: 'Kilogramos / Bandejas', unit: 'KG / Bandejas' }
+]
 
 const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal = () => { } }) => {
-   const { user, getHarvestPDFEspecificExport } = useContext(AppContext)
-   const { toggleSidebar } = useContext(UiContext)
+   const { user, getHarvestPDFEspecificExport, getHarvestPDFResumeExport } = useContext(AppContext)
+   const { toggleSidebar, toggleLoading } = useContext(UiContext)
    const { width } = useWindowSize()
 
-   const handleDownloadPDF = async () => {
-
-      const numberFormat = ({ num, decimals = 2, region = 'cl-CL' }) => {
-         const options = { minimumFractionDigits: decimals }
-         const formatter = new Intl.NumberFormat(region, options)
-         return formatter.format(num)
-      }
-
+   const handleDownloadEspecificPDF = async () => {
+      toggleLoading(true)
       const resp = await getHarvestPDFEspecificExport()
+      toggleLoading(false)
 
       if (!resp.ok) return
 
       const { general, top_five, under_average } = resp.data
       const date = moment(new Date()).format('DD-MM-YYYY HH:mm:ss')
+      const total = Object.values(under_average).reduce((a, b) => {
+         return a + b.peso
+      }, 0)
 
       let doc = new jsPDF()
       doc.addImage(logo, 'PNG', 10, 10, 20, 20)
@@ -63,7 +70,133 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
          body: top_five.map((item, i) => [i + 1, item.nombre_cosechero, numberFormat({ num: item.peso })]),
          foot: [['', `Fecha y hora impresion: ${date}`, '']]
       })
-      doc.save('resume.pdf')
+
+      doc.addPage()
+
+      doc.addImage(logo, 'PNG', 10, 10, 20, 20)
+      doc.setFontSize(24)
+      doc.text(general.nombre_empresa, 10, 40)
+      doc.setFontSize(16)
+      doc.text(general.msg_filtro_fecha, 10, 50)
+      doc.autoTable({
+         theme: 'grid',
+         headStyles: {
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+            lineWidth: 0.1,
+            halign: 'center'
+         },
+         columnStyles: {
+            0: { halign: 'right' },
+            1: { halign: 'left' },
+            2: { halign: 'right' },
+         },
+         footStyles: {
+            halign: 'right',
+            valign: 'bottom',
+            minCellHeight: 10,
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+         },
+         startY: 60,
+         head: [['#', 'Mejores Totales', 'KGS']],
+         body: under_average.map((item, i) => [i + 1, item.nombre_cosechero, numberFormat({ num: item.peso })]),
+         foot: [['', 'Kgs total cosecha acumulada: ', numberFormat({ num: total })]]
+      })
+
+      doc.save('especifico.pdf')
+
+   }
+
+   const handleDownloadResumePDF = async () => {
+      toggleLoading(true)
+      const resp = await getHarvestPDFResumeExport()
+      toggleLoading(false)
+
+      if (!resp.ok) return
+
+      const { general, resumen_especifico, resumen_general } = resp.data
+      const date = moment(new Date()).format('DD-MM-YYYY HH:mm:ss')
+
+      let doc = new jsPDF()
+      doc.addImage(logo, 'PNG', 10, 10, 20, 20)
+      doc.setFontSize(24)
+      doc.text(general.nombre_empresa, 10, 40)
+      doc.setFontSize(16)
+      doc.text(general.msg_filtro_fecha, 10, 50)
+      doc.setFontSize(14)
+      doc.text('Total General', 10, 65)
+
+      doc.autoTable({
+         theme: 'grid',
+         headStyles: {
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+            lineWidth: 0.1,
+            halign: 'center'
+         },
+         columnStyles: {
+            0: { halign: 'left' },
+            1: { halign: 'right' },
+            2: { halign: 'left' },
+         },
+         footStyles: {
+            halign: 'right',
+            valign: 'bottom',
+            minCellHeight: 10,
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+         },
+         startY: 70,
+         body: Object.values(resumen_general[0]).map((item, i) => [arrayComplement[i].label + 1, numberFormat({ num: item }), arrayComplement[i].unit]),
+         foot: [['', `Fecha y hora impresion: ${date}`, '']]
+      })
+
+      Object.values(resumen_especifico).forEach(res => {
+         Object.values(res.fundos).forEach(fun => {
+            Object.values(fun.cuarteles).forEach(cua => {
+
+               doc.addPage()
+               doc.addImage(logo, 'PNG', 10, 10, 20, 20)
+               doc.setFontSize(24)
+               doc.text(general.nombre_empresa, 10, 40)
+               doc.setFontSize(16)
+               doc.text(general.msg_filtro_fecha, 10, 50)
+               doc.setFontSize(14)
+               doc.text(`Especie: ${res.especie} -  Fundo: ${fun.nombre_fundo} - Cuartel: ${cua.nombre_cuartel}`, 10, 65)
+
+               doc.autoTable({
+                  theme: 'grid',
+                  headStyles: {
+                     fillColor: [255, 255, 255],
+                     textColor: [0, 0, 0],
+                     fontStyle: 'bold',
+                     lineWidth: 0.1,
+                     halign: 'center'
+                  },
+                  columnStyles: {
+                     0: { halign: 'left' },
+                     1: { halign: 'right' },
+                     2: { halign: 'left' },
+                  },
+                  footStyles: {
+                     halign: 'right',
+                     valign: 'bottom',
+                     minCellHeight: 10,
+                     fillColor: [255, 255, 255],
+                     textColor: [0, 0, 0],
+                  },
+                  startY: 70,
+                  body: Object.values(cua.data[0]).map((item, i) => [arrayComplement[i].label + 1, numberFormat({ num: item }), arrayComplement[i].unit]),
+                  foot: [['', `Fecha y hora impresion: ${date}`, '']]
+               })
+            })
+         })
+      })
+
+      doc.save('resumen.pdf')
 
    }
 
@@ -88,11 +221,19 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
                            <ExportExcel EnterpriseName='AGRICOLA PICOLTUE LIMITADA' />
                            <hr />
                            <Button
-                              className='hover:bg-gray-200'
+                              className='hover:bg-gray-200 w-full'
+                              type='iconText'
+                              name='Especifico'
+                              icon='fas fa-file-pdf text-red-400'
+                              onClick={handleDownloadEspecificPDF}
+                           />
+                           <hr />
+                           <Button
+                              className='hover:bg-gray-200 w-full'
                               type='iconText'
                               name='Resumen'
                               icon='fas fa-file-pdf text-red-400'
-                              onClick={handleDownloadPDF}
+                              onClick={handleDownloadResumePDF}
                            />
                         </MenuContent>
                      </Menu>

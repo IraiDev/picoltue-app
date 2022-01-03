@@ -16,3 +16,9 @@ export const checkForms = (value) => {
    })
    return obj
 }
+
+export const numberFormat = ({ num, decimals = 2, region = 'cl-CL' }) => {
+   const options = { minimumFractionDigits: decimals }
+   const formatter = new Intl.NumberFormat(region, options)
+   return formatter.format(num)
+}
