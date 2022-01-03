@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Routes, Route, HashRouter } from 'react-router-dom'
 import { Login } from '../components/screens/Login'
 import Loading from '../components/ui/Loading'
 import { UiContext } from '../context/UiContext'
@@ -25,7 +25,7 @@ const AppRoutes = () => {
 
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path={login} element={
             <PublicRoutes>
@@ -39,7 +39,7 @@ const AppRoutes = () => {
             </PrivateRoutes>} />
 
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
       <Loading show={ShowLoading} />
     </>
   )

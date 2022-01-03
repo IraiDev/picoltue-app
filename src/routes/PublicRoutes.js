@@ -6,7 +6,9 @@ const PublicRoutes = ({ children }) => {
 
   const { user } = useContext(AppContext)
 
-  return user.ok ? <Navigate to='/' /> : children
+  const lastPath = window.localStorage.getItem('picoltue-lastpath') || '/'
+
+  return user.ok ? <Navigate to={lastPath} /> : children
 }
 
 export default PublicRoutes
