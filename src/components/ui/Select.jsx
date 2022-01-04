@@ -5,14 +5,15 @@ const Select = ({
    onChange,
    value,
    name,
-   className = 'border rounded-md w-full bg-gray-50 border-gray-300 p-1 text-xs',
+   className = 'border rounded-md truncate bg-gray-50 border-gray-300 text-xs',
    showAllOption = false,
-   title
+   title,
+   width = 'w-full p-1'
 }) => {
 
    return (
       <select
-         className={className}
+         className={className + ' ' + width}
          title={title}
          value={value}
          name={name}
@@ -20,9 +21,14 @@ const Select = ({
       >
          <option disabled={showAllOption} value=''>Todos</option>
          {options.length > 0 &&
-            options.map(option => {
-               return <option key={option.value} value={option.value}>{option.label}</option>
-            })
+            options.map(option => (
+               <option
+                  className='w-max'
+                  key={option.value}
+                  value={option.value}>
+                  {option.label}
+               </option>
+            ))
          }
       </select>
    )

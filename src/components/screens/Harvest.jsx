@@ -153,7 +153,7 @@ const Harvest = () => {
                 </button>
               </Th>
               <Th><Select options={fundos} value={filterFound} name='filterFound' onChange={onChangeValues} /></Th>
-              <Th><Select options={cuarteles} value={filterCuartel} name='filterCuartel' onChange={onChangeValues} /></Th>
+              <Th><Select width='w-16 py-1' options={cuarteles} value={filterCuartel} name='filterCuartel' onChange={onChangeValues} /></Th>
               <Th><Select options={especies} value={filterSpecies} name='filterSpecies' onChange={onChangeValues} /></Th>
               <Th>
                 <form onSubmit={onSearch}>
@@ -219,11 +219,11 @@ const Harvest = () => {
                 </button>
               </Th>
               <Th></Th>
-              <Th>
+              <Th >
                 <form onSubmit={onSearch}>
                   <input
                     ref={userRef}
-                    className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
+                    className="p-1 rounded-md w-24 focus:outline-none focus:shadow-md focus:ring transition duration-200"
                     type="text"
                     name="filterUser"
                     value={prettifyRut(filterUser)}
@@ -257,7 +257,7 @@ const Harvest = () => {
               <Th>rut cosechero</Th>
               <Th>nombre cosechero</Th>
               <Th>cantidad</Th>
-              <Th>U. medida</Th>
+              <Th title='Unidad de medida'>U.M</Th>
               <Th>fecha lectura</Th>
               <Th>equipo</Th>
               <Th>usuario</Th>
@@ -275,8 +275,8 @@ const Harvest = () => {
                       {i + 1}
                     </span>
                   </Td>
-                  <Td children={l.desc_item_negocio} />
-                  <Td children={l.desc_cuartel} />
+                  <Td className='w-max' children={l.desc_item_negocio} />
+                  <Td className='w-full truncate' children={l.desc_cuartel} />
                   <Td children={l.desc_especie} />
                   <Td children={l.rut_trabajador} />
                   <Td className='w-max' children={l.nombre_cosechero} />
@@ -292,7 +292,7 @@ const Harvest = () => {
                   <Td align='text-left' children={l.desc_tipo_med} />
                   <Td className='w-max' children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
                   <Td children={l.id_dispo} />
-                  <Td children={l.rut_supervisor} />
+                  <Td className='w-max' children={l.rut_supervisor} />
                   <Td children={l.id} />
                   <Td children={l.id_local} />
                 </tr>

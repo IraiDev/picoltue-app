@@ -100,7 +100,7 @@ const Container = ({ children, title = 'Titulo', showMenu = false, toggleModal =
             textColor: [0, 0, 0],
          },
          startY: 60,
-         head: [['#', 'Mejores Totales', 'KGS']],
+         head: [['#', 'Bajo 39 KGS', 'KGS']],
          body: under_average.map((item, i) => [i + 1, item.nombre_cosechero, numberFormat({ num: item.peso })]),
          foot: [['', 'Kgs total cosecha acumulada: ', numberFormat({ num: total })]]
       })

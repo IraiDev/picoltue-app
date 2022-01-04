@@ -10,7 +10,7 @@ module.exports = {
         'sb': '500px',
       },
       width: {
-        table: '1550px',
+        table: '1600px',
         table_md: '920px',
         table_sm: '720px'
       }
