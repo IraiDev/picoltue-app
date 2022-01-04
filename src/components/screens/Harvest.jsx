@@ -292,7 +292,7 @@ const Harvest = () => {
                   <Td align='text-left' children={l.desc_tipo_med} />
                   <Td className='w-max' children={moment(l.fecha_hora_lect).format('DD-MM-YYYY, HH:MM:ss')} />
                   <Td children={l.id_dispo} />
-                  <Td className='w-max' children={l.rut_supervisor} />
+                  <Td className='w-full' children={l.rut_supervisor} />
                   <Td children={l.id} />
                   <Td children={l.id_local} />
                 </tr>
