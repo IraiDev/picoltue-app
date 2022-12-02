@@ -27,7 +27,7 @@ const limite = [
    { value: 10, label: '10' },
    { value: 25, label: '25' },
    { value: 50, label: '50' },
-   { value: 100, label: '100' }
+   { value: 100, label: '100' },
 ]
 
 const initForm = {
@@ -39,11 +39,10 @@ const initForm = {
    date: '',
    city: '',
    country: '',
-   id: null
+   id: null,
 }
 
 const Inscription = () => {
-
    const { inscripciones, updateSheet, insertSheet, getSheets, filtros } = useContext(AppContext)
    const { toggleLoading } = useContext(UiContext)
 
@@ -54,24 +53,24 @@ const Inscription = () => {
    const [resetFilters, onReset] = useToggle(false)
 
    // destructuring
-   const { rut, firstName, secondName, lastName, secondLastName, date, city, country, id } = values
+   const { rut, firstName, secondName, lastName, secondLastName, date, city, country, id } =
+      values
    const { ciudades, comunas } = filtros
    // destructuring
 
-   const rutRef = useRef(), nameRef = useRef()
+   const rutRef = useRef(),
+      nameRef = useRef()
 
-   const [{
-      filterRut,
-      filterName,
-      filterCountry,
-      filterCity,
-      filterLimit
-   }, onChangeValues, reset] = useForm({
+   const [
+      { filterRut, filterName, filterCountry, filterCity, filterLimit },
+      onChangeValues,
+      reset,
+   ] = useForm({
       filterRut: '',
       filterName: '',
       filterLimit: 10,
       filterCountry: '',
-      filterCity: ''
+      filterCity: '',
    })
    const cityTable = useDependSelect(filterCountry, ciudades)
    const cityForm = useDependSelect(country, ciudades)
@@ -82,7 +81,7 @@ const Inscription = () => {
       getSheets({
          offset,
          limite: Number(filterLimit),
-         rut_trabajador: prettifyRut(filterRut),
+         rut_trabajador: filterRut,
          nombre_trabajador: filterName,
          comuna: Number(filterCountry),
          ciudad: Number(filterCity),
@@ -95,7 +94,13 @@ const Inscription = () => {
    }
 
    const handleNewInscription = () => {
-      const fieldValidations = rut.trim() === '' || firstName.trim() === '' || secondName.trim() === '' || lastName.trim() === '' || secondLastName.trim() === '' || date.trim() === ''
+      const fieldValidations =
+         rut.trim() === '' ||
+         firstName.trim() === '' ||
+         secondName.trim() === '' ||
+         lastName.trim() === '' ||
+         secondLastName.trim() === '' ||
+         date.trim() === ''
       const selectValidation = country === '' || city === ''
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
@@ -115,7 +120,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(rc, rl, 'Rut'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -126,7 +131,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(fc, fl, 'primer nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -137,7 +142,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(snc, snl, 'segundo nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -148,7 +153,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(lc, ll, 'apellido paterno'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -159,7 +164,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(slc, sll, 'apellido materno'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -174,7 +179,7 @@ const Inscription = () => {
                Nombre, segundo nombre, apellido paterno, apellido materno, 
                rut, fecha de nacimiento, ciudad y comuna.
              </strong>`,
-            showCancelButton: false
+            showCancelButton: false,
          })
          return
       }
@@ -185,7 +190,7 @@ const Inscription = () => {
             title: 'Rut invalido',
             content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
             showCancelButton: false,
-            timer: 6000
+            timer: 6000,
          })
          return
       }
@@ -217,7 +222,13 @@ const Inscription = () => {
    }
 
    const handleUpdateInscription = () => {
-      const fieldValidations = rut.trim() === '' || firstName.trim() === '' || secondName.trim() === '' || lastName.trim() === '' || secondLastName.trim() === '' || date.trim() === ''
+      const fieldValidations =
+         rut.trim() === '' ||
+         firstName.trim() === '' ||
+         secondName.trim() === '' ||
+         lastName.trim() === '' ||
+         secondLastName.trim() === '' ||
+         date.trim() === ''
       const selectValidation = country === '' || city === ''
 
       const { state: rs, char: rc, list: rl } = checkForms(rut)
@@ -237,7 +248,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(rc, rl, 'Rut'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -248,7 +259,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(fc, fl, 'primer nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -259,7 +270,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(snc, snl, 'segundo nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -270,7 +281,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(lc, ll, 'apellido paterno'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -281,7 +292,7 @@ const Inscription = () => {
             title: 'Atencion',
             content: contentFormat(slc, sll, 'apellido materno'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -296,7 +307,7 @@ const Inscription = () => {
                Nombre, segundo nombre, apellido paterno, apellido materno, 
                rut, fecha de nacimiento, ciudad y comuna.
              </strong>`,
-            showCancelButton: false
+            showCancelButton: false,
          })
          return
       }
@@ -307,7 +318,7 @@ const Inscription = () => {
             title: 'Rut invalido',
             content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
             showCancelButton: false,
-            timer: 6000
+            timer: 6000,
          })
          return
       }
@@ -340,7 +351,7 @@ const Inscription = () => {
    }
 
    const updateAction = (id) => {
-      const i = inscripciones.fichas.find(f => f.id_ficha_inscripcion === id)
+      const i = inscripciones.fichas.find((f) => f.id_ficha_inscripcion === id)
       const {
          nombre,
          segundo_nombre,
@@ -349,14 +360,15 @@ const Inscription = () => {
          apellido_paterno,
          fecha_nacto,
          id_ciudad,
-         id_comuna
+         id_comuna,
       } = i
 
-      let co = { value: '' }, ci = { value: '' }
+      let co = { value: '' },
+         ci = { value: '' }
 
       if (id_comuna || id_ciudad) {
-         co = comunas.find(c => Number(c.value) === id_comuna)
-         ci = ciudades.find(c => Number(c.value) === id_ciudad)
+         co = comunas.find((c) => Number(c.value) === id_comuna)
+         ci = ciudades.find((c) => Number(c.value) === id_ciudad)
       }
       setValues({
          rut: rut_trabajador,
@@ -367,7 +379,7 @@ const Inscription = () => {
          date: moment(new Date(fecha_nacto)).format('yyyy-MM-DD'),
          city: ci.value,
          country: co.value,
-         id
+         id,
       })
 
       toggleModal()
@@ -399,16 +411,15 @@ const Inscription = () => {
 
    return (
       <>
-         <Container
-            title="Fichas de Inscripciones"
-            toggleModal={toggleModal} >
-            <Table width='w-table_md'>
+         <Container title="Fichas de Inscripciones" toggleModal={toggleModal}>
+            <Table width="w-table_md">
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
-                     <th className='px-3' colSpan={2}>
+                     <th className="px-3" colSpan={2}>
                         <button
-                           className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none'
-                           onClick={handleReset} >
+                           className="capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none"
+                           onClick={handleReset}
+                        >
                            reestablecer
                         </button>
                      </th>
@@ -420,12 +431,13 @@ const Inscription = () => {
                               type="text"
                               name="filterRut"
                               value={filterRut}
-                              placeholder='Rut...'
+                              placeholder="Rut..."
                               onChange={onChangeValues}
-                              onFocus={e => {
+                              onFocus={(e) => {
                                  e.target.select()
-                              }} />
-                           <button className='hidden' type='submit'></button>
+                              }}
+                           />
+                           <button className="hidden" type="submit"></button>
                         </form>
                      </Th>
                      <Th>
@@ -436,23 +448,38 @@ const Inscription = () => {
                               type="text"
                               name="filterName"
                               value={filterName}
-                              placeholder='Nombre...'
+                              placeholder="Nombre..."
                               onChange={onChangeValues}
-                              onFocus={e => {
+                              onFocus={(e) => {
                                  e.target.select()
-                              }} />
-                           <button className='hidden' type='submit'></button>
+                              }}
+                           />
+                           <button className="hidden" type="submit"></button>
                         </form>
                      </Th>
-                     <Th><Select options={comunas} value={filterCountry} name='filterCountry' onChange={onChangeValues} /></Th>
-                     <Th><Select options={cityTable} value={filterCity} name='filterCity' onChange={onChangeValues} /></Th>
                      <Th>
-                        <div className='flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1 w-max'>
-                           <label >Limite</label>
+                        <Select
+                           options={comunas}
+                           value={filterCountry}
+                           name="filterCountry"
+                           onChange={onChangeValues}
+                        />
+                     </Th>
+                     <Th>
+                        <Select
+                           options={cityTable}
+                           value={filterCity}
+                           name="filterCity"
+                           onChange={onChangeValues}
+                        />
+                     </Th>
+                     <Th>
+                        <div className="flex items-center gap-2 rounded-md bg-gray-300 p-1 mr-1 w-max">
+                           <label>Limite</label>
                            <Select
                               options={limite}
                               value={filterLimit}
-                              name='filterLimit'
+                              name="filterLimit"
                               onChange={onChangeValues}
                               showAllOption={filterName === '' && filterRut === ''}
                            />
@@ -470,69 +497,76 @@ const Inscription = () => {
                   </tr>
                </THead>
                <TBody>
-                  {
-                     Object.keys(inscripciones).length > 0 &&
+                  {Object.keys(inscripciones).length > 0 &&
                      inscripciones.fichas.map((f, i) => (
-                        <tr key={f.id_ficha_inscripcion} className="text-gray-700 text-sm border-b">
+                        <tr
+                           key={f.id_ficha_inscripcion}
+                           className="text-gray-700 text-sm border-b"
+                        >
                            <Td borderLeft={false}>
                               <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md">
                                  {i + 1}
                               </span>
                            </Td>
                            <Td>{f.id_ficha_inscripcion}</Td>
-                           <Td className='w-max'>{f.rut_trabajador}</Td>
-                           <Td className='w-max'>{f.nombre} {f.segundo_nombre} {f.apellido_paterno} {f.apellido_materno}</Td>
-                           <Td className='w-max'>{f.comuna ? f.comuna.nombre : '--'}</Td>
-                           <Td className='w-max'>{f.ciudad ? f.ciudad.nombre : '--'}</Td>
+                           <Td className="w-max">{f.rut_trabajador}</Td>
+                           <Td className="w-max">
+                              {f.nombre} {f.segundo_nombre} {f.apellido_paterno}{' '}
+                              {f.apellido_materno}
+                           </Td>
+                           <Td className="w-max">{f.comuna ? f.comuna.nombre : '--'}</Td>
+                           <Td className="w-max">{f.ciudad ? f.ciudad.nombre : '--'}</Td>
                            <Td>
                               <div className="flex items-center justify-center">
                                  <Button
                                     className="text-red-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
-                                    icon="fas fa-trash-alt" />
+                                    icon="fas fa-trash-alt"
+                                 />
                                  <Button
                                     className="text-blue-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
                                     icon="fas fa-pen"
-                                    onClick={() => updateAction(f.id_ficha_inscripcion)} />
+                                    onClick={() => updateAction(f.id_ficha_inscripcion)}
+                                 />
                               </div>
                            </Td>
                         </tr>
-                     ))
-                  }
+                     ))}
                </TBody>
                <TFooter>
-                  <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
-                     <td colSpan={8} className='p-2 w-full'>
-                        <div className='flex justify-around items-center px-4'>
-                           <label>Total inscripciones:
+                  <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
+                     <td colSpan={8} className="p-2 w-full">
+                        <div className="flex justify-around items-center px-4">
+                           <label>
+                              Total inscripciones:
                               <NumberFormat
-                                 className='ml-1'
+                                 className="ml-1"
                                  value={inscripciones.fichas_totales}
                                  displayType={'text'}
-                                 decimalSeparator=','
-                                 thousandSeparator='.'
+                                 decimalSeparator=","
+                                 thousandSeparator="."
                               />
                            </label>
-                           {
-                              filterLimit !== '' ?
-                                 <Pager
-                                    page={page}
-                                    onPageChange={handleOnChangePage}
-                                    pageRangeDisplayed={5}
-                                    limit={filterLimit}
-                                    totals={inscripciones.fichas_pagina}
-                                 />
-                                 :
-                                 <div></div>
-                           }
-                           <label>Total según filtro :
+                           {filterLimit !== '' ? (
+                              <Pager
+                                 page={page}
+                                 onPageChange={handleOnChangePage}
+                                 pageRangeDisplayed={5}
+                                 limit={filterLimit}
+                                 totals={inscripciones.fichas_pagina}
+                              />
+                           ) : (
+                              <div></div>
+                           )}
+                           <label>
+                              Total según filtro :
                               <NumberFormat
-                                 className='ml-1'
+                                 className="ml-1"
                                  value={inscripciones.fichas_pagina}
                                  displayType={'text'}
-                                 decimalSeparator=','
-                                 thousandSeparator='.'
+                                 decimalSeparator=","
+                                 thousandSeparator="."
                               />
                            </label>
                         </div>
@@ -543,16 +577,15 @@ const Inscription = () => {
          </Container>
 
          <Modal showModal={showModal} onClose={handleCloseModal}>
-            <header className='flex justify-between items-center mt-2 mb-5'>
+            <header className="flex justify-between items-center mt-2 mb-5">
                <h1 className="uppercase font-semibold text-lg">
                   {id ? 'MOdificar FICHA DE INSCRIPCION' : 'NUEVA FICHA DE INSCRIPCION'}
                </h1>
-               {
-                  id &&
-                  <h5 className='capitalize bg-gray-100 rounded-full py-1 px-2 font-semibold text-gray-500'>
+               {id && (
+                  <h5 className="capitalize bg-gray-100 rounded-full py-1 px-2 font-semibold text-gray-500">
                      ID ficha: {id}
                   </h5>
-               }
+               )}
             </header>
             <section className="grid gap-4">
                <HrLabel name="datos ficha" />
@@ -561,36 +594,48 @@ const Inscription = () => {
                      field="Primer nombre"
                      name="firstName"
                      value={firstName}
-                     onChange={e => setValues({
-                        ...values,
-                        firstName: e.target.value
-                     })} />
+                     onChange={(e) =>
+                        setValues({
+                           ...values,
+                           firstName: e.target.value,
+                        })
+                     }
+                  />
                   <Input
                      field="segundo nombre"
                      name="secondName"
                      value={secondName}
-                     onChange={e => setValues({
-                        ...values,
-                        secondName: e.target.value
-                     })} />
+                     onChange={(e) =>
+                        setValues({
+                           ...values,
+                           secondName: e.target.value,
+                        })
+                     }
+                  />
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                      field="apellido paterno"
                      name="lastName"
                      value={lastName}
-                     onChange={e => setValues({
-                        ...values,
-                        lastName: e.target.value
-                     })} />
+                     onChange={(e) =>
+                        setValues({
+                           ...values,
+                           lastName: e.target.value,
+                        })
+                     }
+                  />
                   <Input
                      field="apellido materno"
                      name="secondLastName"
                      value={secondLastName}
-                     onChange={e => setValues({
-                        ...values,
-                        secondLastName: e.target.value
-                     })} />
+                     onChange={(e) =>
+                        setValues({
+                           ...values,
+                           secondLastName: e.target.value,
+                        })
+                     }
+                  />
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
@@ -598,46 +643,57 @@ const Inscription = () => {
                      name="rut"
                      placeholder="ej: 12.345.678-9"
                      value={prettifyRut(rut)}
-                     onChange={e => setValues({
-                        ...values,
-                        rut: e.target.value
-                     })} />
+                     onChange={(e) =>
+                        setValues({
+                           ...values,
+                           rut: e.target.value,
+                        })
+                     }
+                  />
                   <Input
                      type="date"
                      field="Fecha de nacimiento"
                      name="date"
                      value={date}
-                     onChange={e => setValues({
-                        ...values,
-                        date: e.target.value
-                     })} />
+                     onChange={(e) =>
+                        setValues({
+                           ...values,
+                           date: e.target.value,
+                        })
+                     }
+                  />
                </div>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <section className='flex items-center gap-2'>
-                     <label className='px-2'>Comuna:</label>
+                  <section className="flex items-center gap-2">
+                     <label className="px-2">Comuna:</label>
                      <Select
-                        className='w-full p-2 bg-gray-100 rounded-md'
+                        className="w-full p-2 bg-gray-100 rounded-md"
                         options={comunas}
                         value={country}
-                        name='country'
-                        onChange={e => setValues({
-                           ...values,
-                           country: e.target.value
-                        })} />
+                        name="country"
+                        onChange={(e) =>
+                           setValues({
+                              ...values,
+                              country: e.target.value,
+                           })
+                        }
+                     />
                   </section>
-                  <section className='flex items-center gap-2'>
-                     <label className='px-2'>Ciudad:</label>
+                  <section className="flex items-center gap-2">
+                     <label className="px-2">Ciudad:</label>
                      <Select
-                        className='w-full p-2 bg-gray-100 rounded-md'
+                        className="w-full p-2 bg-gray-100 rounded-md"
                         options={cityForm}
                         value={city}
-                        name='city'
-                        onChange={e => setValues({
-                           ...values,
-                           city: e.target.value
-                        })} />
+                        name="city"
+                        onChange={(e) =>
+                           setValues({
+                              ...values,
+                              city: e.target.value,
+                           })
+                        }
+                     />
                   </section>
-
 
                   {/* <Input
                      field="comuna"

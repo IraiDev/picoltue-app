@@ -25,7 +25,7 @@ const limite = [
    { value: 10, label: '10' },
    { value: 25, label: '25' },
    { value: 50, label: '50' },
-   { value: 100, label: '100' }
+   { value: 100, label: '100' },
 ]
 
 const initForm = {
@@ -33,33 +33,34 @@ const initForm = {
    name: '',
    email: '',
    login: '',
-   id: null
+   id: null,
 }
 
 const UserManteiner = () => {
-
-   const { getUsers, usersData, insertUser, updateUser, resetUserPassword } = useContext(AppContext)
+   const { getUsers, usersData, insertUser, updateUser, resetUserPassword } =
+      useContext(AppContext)
    const { toggleLoading } = useContext(UiContext)
    const [showModal, toggleModal] = useToggle(false)
    const [page, setPage] = useState(1)
    const [offSet, setOffSet] = useState(0)
    const [values, setValues] = useState(initForm)
    const [resetFilters, onReset] = useToggle(false)
-   const [{
-      filterRut,
-      filterName,
-      filterLogin,
-      filterLimit,
-      filterEmail
-   }, onChangeValues, reset] = useForm({
+   const [
+      { filterRut, filterName, filterLogin, filterLimit, filterEmail },
+      onChangeValues,
+      reset,
+   ] = useForm({
       filterRut: '',
       filterName: '',
       filterLogin: '',
       filterLimit: 10,
-      filterEmail: ''
+      filterEmail: '',
    })
 
-   const rutRef = useRef(), nameRef = useRef(), emailRef = useRef(), loginRef = useRef()
+   const rutRef = useRef(),
+      nameRef = useRef(),
+      emailRef = useRef(),
+      loginRef = useRef()
 
    // destructuring
    const { rut, name, email, login, id } = values
@@ -91,7 +92,6 @@ const UserManteiner = () => {
    }
 
    const handleNewUser = async () => {
-
       const { state: rs, char: rc, list: rl } = checkForms(rut)
       const { state: ns, char: nc, list: nl } = checkForms(name)
       const { state: es, char: ec, list: el } = checkForms(email)
@@ -108,7 +108,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(rc, rl, 'Rut'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -119,7 +119,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(nc, nl, 'primer nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -130,7 +130,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(ec, el, 'segundo nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -141,7 +141,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(lc, ll, 'apellido paterno'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -155,7 +155,7 @@ const UserManteiner = () => {
              <strong class="mt-4 block">
                Nombre y apellido, rut, login, correo.
              </strong>`,
-            showCancelButton: false
+            showCancelButton: false,
          })
          return
       }
@@ -166,7 +166,7 @@ const UserManteiner = () => {
             title: 'Rut invalido',
             content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
             showCancelButton: false,
-            timer: 6000
+            timer: 6000,
          })
          return
       }
@@ -194,7 +194,6 @@ const UserManteiner = () => {
    }
 
    const handleUpdateUser = async () => {
-
       const { state: rs, char: rc, list: rl } = checkForms(rut)
       const { state: ns, char: nc, list: nl } = checkForms(name)
       const { state: es, char: ec, list: el } = checkForms(email)
@@ -211,7 +210,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(rc, rl, 'Rut'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -222,7 +221,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(nc, nl, 'primer nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -233,7 +232,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(ec, el, 'segundo nombre'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -244,7 +243,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: contentFormat(lc, ll, 'apellido paterno'),
             showCancelButton: false,
-            timer: 8000
+            timer: 8000,
          })
          return
       }
@@ -254,7 +253,7 @@ const UserManteiner = () => {
             title: 'Atencion',
             content: 'Todos los campos son obligatorios, por favor llene todos los campos',
             showCancelButton: false,
-            timer: 6000
+            timer: 6000,
          })
          return
       }
@@ -265,7 +264,7 @@ const UserManteiner = () => {
             title: 'Rut invalido',
             content: 'El rut ingresado no es valido, por favor verifiquelo y vuelva a intentarlo',
             showCancelButton: false,
-            timer: 6000
+            timer: 6000,
          })
          return
       }
@@ -314,7 +313,7 @@ const UserManteiner = () => {
    }
 
    const openUpdateModal = (id) => {
-      const u = usersData.usuarios.find(user => user.id_user === id)
+      const u = usersData.usuarios.find((user) => user.id_user === id)
       const { rut_user, nom_user, login_user, correo_user } = u
       setValues({
          rut: rut_user,
@@ -333,17 +332,15 @@ const UserManteiner = () => {
 
    return (
       <>
-         <Container
-            title="Usuarios del sistema"
-            toggleModal={toggleModal}
-         >
-            <Table width='w-table_md'>
+         <Container title="Usuarios del sistema" toggleModal={toggleModal}>
+            <Table width="w-table_md">
                <THead>
                   <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
                      <Th>
                         <button
-                           className='capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none'
-                           onClick={handleReset} >
+                           className="capitalize rounded-full px-2 py-1.5 font-semibold text-white bg-blue-500 hover:bg-blue-400 transition duration-500 focus:outline-none"
+                           onClick={handleReset}
+                        >
                            reestablecer
                         </button>
                      </Th>
@@ -354,13 +351,14 @@ const UserManteiner = () => {
                               className="p-1 rounded-md w-full focus:outline-none focus:shadow-md focus:ring transition duration-200"
                               type="text"
                               name="filterRut"
-                              value={prettifyRut(filterRut)}
-                              placeholder='Rut...'
+                              value={filterRut}
+                              placeholder="Rut..."
                               onChange={onChangeValues}
-                              onFocus={e => {
+                              onFocus={(e) => {
                                  e.target.select()
-                              }} />
-                           <button className='hidden' type='submit'></button>
+                              }}
+                           />
+                           <button className="hidden" type="submit"></button>
                         </form>
                      </Th>
                      <Th>
@@ -371,12 +369,13 @@ const UserManteiner = () => {
                               type="text"
                               name="filterName"
                               value={filterName}
-                              placeholder='Nombre...'
+                              placeholder="Nombre..."
                               onChange={onChangeValues}
-                              onFocus={e => {
+                              onFocus={(e) => {
                                  e.target.select()
-                              }} />
-                           <button className='hidden' type='submit'></button>
+                              }}
+                           />
+                           <button className="hidden" type="submit"></button>
                         </form>
                      </Th>
                      <Th>
@@ -387,12 +386,13 @@ const UserManteiner = () => {
                               type="text"
                               name="filterLogin"
                               value={filterLogin}
-                              placeholder='Login...'
+                              placeholder="Login..."
                               onChange={onChangeValues}
-                              onFocus={e => {
+                              onFocus={(e) => {
                                  e.target.select()
-                              }} />
-                           <button className='hidden' type='submit'></button>
+                              }}
+                           />
+                           <button className="hidden" type="submit"></button>
                         </form>
                      </Th>
                      <Th>
@@ -403,21 +403,27 @@ const UserManteiner = () => {
                               type="text"
                               name="filterEmail"
                               value={filterEmail}
-                              placeholder='Correo...'
+                              placeholder="Correo..."
                               onChange={onChangeValues}
-                              onFocus={e => {
+                              onFocus={(e) => {
                                  e.target.select()
-                              }} />
-                           <button className='hidden' type='submit'></button>
+                              }}
+                           />
+                           <button className="hidden" type="submit"></button>
                         </form>
                      </Th>
                      <Th>
                         <Select
                            options={limite}
                            value={filterLimit}
-                           name='filterLimit'
+                           name="filterLimit"
                            onChange={onChangeValues}
-                           showAllOption={filterLogin === '' && filterEmail === '' && filterName === '' && filterRut === ''}
+                           showAllOption={
+                              filterLogin === '' &&
+                              filterEmail === '' &&
+                              filterName === '' &&
+                              filterRut === ''
+                           }
                         />
                      </Th>
                   </tr>
@@ -431,72 +437,70 @@ const UserManteiner = () => {
                   </tr>
                </THead>
                <TBody>
-                  {
-                     Object.keys(usersData).length > 0 &&
+                  {Object.keys(usersData).length > 0 &&
                      usersData.usuarios.map((us, i) => (
-                        <tr
-                           key={us.id_user}
-                           className="text-gray-700 text-sm border-b"
-                        >
+                        <tr key={us.id_user} className="text-gray-700 text-sm border-b">
                            <Td borderLeft={false}>
                               <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-md">
                                  {i + 1}
                               </span>
                            </Td>
-                           <Td className='w-max'>{us.rut_user}</Td>
-                           <Td className='uppercase w-max'>{us.nom_user}</Td>
-                           <Td className='w-max'>{us.login_user}</Td>
-                           <Td className='w-max'>{us.correo_user}</Td>
+                           <Td className="w-max">{us.rut_user}</Td>
+                           <Td className="uppercase w-max">{us.nom_user}</Td>
+                           <Td className="w-max">{us.login_user}</Td>
+                           <Td className="w-max">{us.correo_user}</Td>
                            <Td>
                               <div className="flex items-center justify-center">
                                  <Button
                                     className="text-blue-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
                                     icon="fas fa-pen"
-                                    onClick={() => openUpdateModal(us.id_user)} />
+                                    onClick={() => openUpdateModal(us.id_user)}
+                                 />
                                  <Button
                                     className="text-green-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
                                     icon="fas fa-undo"
-                                    onClick={() => handleResetPass(us.id_user)} />
+                                    onClick={() => handleResetPass(us.id_user)}
+                                 />
                               </div>
                            </Td>
                         </tr>
-                     ))
-                  }
+                     ))}
                </TBody>
                <TFooter>
-                  <tr className='text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize'>
-                     <td colSpan={8} className='p-2 w-full'>
-                        <div className='flex justify-around items-center px-4'>
-                           <label>Total inscripciones:
+                  <tr className="text-xs font-semibold tracking-wide text-center text-gray-900 bg-gray-200 capitalize">
+                     <td colSpan={8} className="p-2 w-full">
+                        <div className="flex justify-around items-center px-4">
+                           <label>
+                              Total inscripciones:
                               <NumberFormat
-                                 className='ml-1'
+                                 className="ml-1"
                                  value={usersData.total_global}
                                  displayType={'text'}
-                                 decimalSeparator=','
-                                 thousandSeparator='.'
+                                 decimalSeparator=","
+                                 thousandSeparator="."
                               />
                            </label>
-                           {
-                              filterLimit !== '' ?
-                                 <Pager
-                                    page={page}
-                                    onPageChange={handleOnChangePage}
-                                    pageRangeDisplayed={5}
-                                    limit={filterLimit}
-                                    totals={usersData.total_filtro}
-                                 />
-                                 :
-                                 <div></div>
-                           }
-                           <label>Total según filtro :
+                           {filterLimit !== '' ? (
+                              <Pager
+                                 page={page}
+                                 onPageChange={handleOnChangePage}
+                                 pageRangeDisplayed={5}
+                                 limit={filterLimit}
+                                 totals={usersData.total_filtro}
+                              />
+                           ) : (
+                              <div></div>
+                           )}
+                           <label>
+                              Total según filtro :
                               <NumberFormat
-                                 className='ml-1'
+                                 className="ml-1"
                                  value={usersData.total_filtro}
                                  displayType={'text'}
-                                 decimalSeparator=','
-                                 thousandSeparator='.'
+                                 decimalSeparator=","
+                                 thousandSeparator="."
                               />
                            </label>
                         </div>
@@ -506,13 +510,15 @@ const UserManteiner = () => {
             </Table>
          </Container>
 
-         <Modal showModal={showModal} onClose={handleCloseModal}
-            className="max-w-lg" padding="p-7" >
+         <Modal
+            showModal={showModal}
+            onClose={handleCloseModal}
+            className="max-w-lg"
+            padding="p-7"
+         >
             <section className="grid gap-4">
                <h1 className="uppercase font-semibold text-lg">
-                  {
-                     id ? 'modificar usuario' : 'Nuevo usuario'
-                  }
+                  {id ? 'modificar usuario' : 'Nuevo usuario'}
                </h1>
                <HrLabel name="datos usuario" />
                <Input
@@ -520,37 +526,48 @@ const UserManteiner = () => {
                   name="rut"
                   placeholder="ej: 12.345.678-9"
                   value={prettifyRut(rut)}
-                  onChange={e => setValues({
-                     ...values,
-                     rut: e.target.value
-                  })} />
+                  onChange={(e) =>
+                     setValues({
+                        ...values,
+                        rut: e.target.value,
+                     })
+                  }
+               />
                <Input
                   field="Nombre completo (Nombre y Apellido)"
                   name="name"
                   value={name}
-                  onChange={e => setValues({
-                     ...values,
-                     name: e.target.value
-                  })} />
+                  onChange={(e) =>
+                     setValues({
+                        ...values,
+                        name: e.target.value,
+                     })
+                  }
+               />
                <Input
                   field="correo"
                   name="email"
                   type="email"
                   placeholder="ej: ejemplo@ejemplo.com"
                   value={email}
-                  onChange={e => setValues({
-                     ...values,
-                     email: e.target.value
-                  })} />
+                  onChange={(e) =>
+                     setValues({
+                        ...values,
+                        email: e.target.value,
+                     })
+                  }
+               />
                <Input
                   field="login"
                   name="login"
                   value={login}
-                  onChange={e => setValues({
-                     ...values,
-                     login: e.target.value
-                  })} />
-
+                  onChange={(e) =>
+                     setValues({
+                        ...values,
+                        login: e.target.value,
+                     })
+                  }
+               />
             </section>
             <footer className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
                <Button
@@ -567,7 +584,6 @@ const UserManteiner = () => {
                />
             </footer>
          </Modal>
-
       </>
    )
 }
