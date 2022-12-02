@@ -518,11 +518,11 @@ const Inscription = () => {
                            <Td className="w-max">{f.ciudad ? f.ciudad.nombre : '--'}</Td>
                            <Td>
                               <div className="flex items-center justify-center">
-                                 <Button
+                                 {/* <Button
                                     className="text-red-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
                                     icon="fas fa-trash-alt"
-                                 />
+                                 /> */}
                                  <Button
                                     className="text-blue-400 hover:bg-gray-200 rounded-md"
                                     type="icon"
@@ -694,69 +694,8 @@ const Inscription = () => {
                         }
                      />
                   </section>
-
-                  {/* <Input
-                     field="comuna"
-                     name="country"
-                     value={country}
-                     onChange={e => setValues({
-                        ...values,
-                        country: e.target.value
-                     })} />
-                  <Input
-                     field="Ciudad"
-                     name="city"
-                     value={city}
-                     onChange={e => setValues({
-                        ...values,
-                        city: e.target.value
-                     })} /> */}
                </div>
-               <div>
-                  {/* <div className="flex items-center gap-4 w-1/2 pr-2">
-                  <label className="capitalize text-xs w-24">nacionalidad:</label>
-                  <Select className="p-2 bg-gray-100 rounded-md w-full" />
-               </div>
-               <HrLabel name="datos de postulacion" />
-               <div className="grid grid-cols-2 gap-4">
-                  <Input field="Dirección" />
-                  <Input field="telefono" />
-               </div>
-               <section className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-4">
-                     <label className="capitalize text-xs w-24">Comuna:</label>
-                     <Select className="p-2 bg-gray-100 rounded-md w-full" />
-                  </div>
-                  <div className="flex items-center gap-4">
-                     <label className="capitalize text-xs w-24">ciudad:</label>
-                     <Select className="p-2 bg-gray-100 rounded-md w-full" />
-                  </div>
-               </section>
-               <section className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-4">
-                     <label className="capitalize text-xs w-24">sexo:</label>
-                     <Select className="p-2 bg-gray-100 rounded-md w-full" />
-                  </div>
-                  <div className="flex items-center gap-4">
-                     <label className="capitalize text-xs w-24">estado civil:</label>
-                     <Select className="p-2 bg-gray-100 rounded-md w-full" />
-                  </div>
-               </section>
-               <section className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-4">
-                     <label className="capitalize text-xs w-24">sistema de salud:</label>
-                     <Select className="p-2 bg-gray-100 rounded-md w-full" />
-                  </div>
-                  <div className="flex items-center gap-4">
-                     <label className="capitalize text-xs w-24">sistema previsional:</label>
-                     <Select className="p-2 bg-gray-100 rounded-md w-full" />
-                  </div>
-               </section>
-               <div className="flex items-center gap-4 w-1/2 pr-2">
-                  <label className="capitalize text-xs w-24">Cargo Postulación:</label>
-                  <Select className="p-2 bg-gray-100 rounded-md w-full" />
-               </div> */}
-               </div>
+               <div></div>
             </section>
             <footer className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
                <Button
